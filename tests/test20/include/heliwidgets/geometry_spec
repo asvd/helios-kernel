@@ -1,0 +1,13 @@
+
+
+myWidget.geometry.set( { left : 0, width : 50 } );
+  - means setting the geometry explicitly
+
+myWidget.geometry.set( { left : 0, width : "50%" } );
+  - percentage will be calculated according to parent's simple goemetry
+
+myWidget.geometry.set( { left : 0, width : "auto" } );
+
+  - width will be calculated to  fit all child widgets whoose geometry
+    is set explicitly, which means  none of left, width, right, middle
+    is defined as percentages
