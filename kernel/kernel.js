@@ -373,7 +373,7 @@ kernel.Module.prototype._initialize = function() {
 
                     // initializing children
                     for ( var i = 0; i < this.children.length; i++ ) {
-                        if ( this.children[i].state==this._states.waiting &&
+                        if ( this.children[i].state == this._states.waiting &&
                              this.children[i]._areParentsReady() ) {
                             this.children[i]._initialize();
                         }
