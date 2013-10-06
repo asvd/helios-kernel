@@ -1,6 +1,5 @@
 /*********************************************************************
-
-  Helios Kernel - simple yet powerful javascript module loader
+  Helios Kernel 0.9.3 - javascript module loader
 
   Licensed under MIT license, see http://github.com/asvd/helios-kernel
 
@@ -70,7 +69,7 @@ kernel.moduleStates = {
     waiting        : 2,  // loaded; waits for the parents to initialize
     initializing   : 3,  // initializer is started, not finished
     ready          : 4,  // loaded, initialized and ready to use
-    uninitializing : 5  // uninitializer is started, not yet finished
+    uninitializing : 5   // uninitializer is started, not yet finished
 }
 
 
@@ -90,7 +89,7 @@ include = function( path ) {
         } else {
             var module = kernel._getOrCreateModule(path);
             module._addChild(child);
-    
+
             // participating in child's statistics
             for ( var i=0; i < child._statsList.length; i++ ) {
                 module._addStats( child._statsList[i] );
@@ -810,7 +809,9 @@ kernel._platform = {};
  *   kernel._platform.thread(
  *       myFunction, myObject, [ arg1, arg2, ... ]
  *   );
+ * 
  *   - will perform the following expression in a new 'thread':
+ * 
  *   myObject.myFunction( arg1, arg2, ... );
  */
 if ( typeof window != 'undefined'
