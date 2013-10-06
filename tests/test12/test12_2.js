@@ -1,7 +1,7 @@
 init = function() {
     something = 0;
     for ( var i = 0; i < 100000; i++ ) {
-        something += kernel.getStatistics()[kernel.moduleStates.ready];
+        something += kernel.getStats()[kernel.states.ready];
     }
     test12_2_init = true;
 

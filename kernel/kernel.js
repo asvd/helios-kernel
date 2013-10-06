@@ -1,55 +1,55 @@
 /*********************************************************************
-  Helios Kernel 0.9.3 - javascript module loader
+  Helios Kernel 0.9.4 - javascript module loader
 
   Licensed under MIT license, see http://github.com/asvd/helios-kernel
 
   The Module lifecycle is processed by the following methods:
   (assuming you have read the documentation)
 
-  * @function kernel.Module() ('created' state), the Module object
+  * @function kernel._Module() ('created' state), the Module object
     constructor, called when the module is requested for the first
     time (_getOrCreateModule() method), the module object is pushed to
     the kernel._loadQueue[] list
 
-  * @function _load() ('loading' state) called by kernel._loadNext()
+  * @function load() ('loading' state) called by kernel._loadNext()
     function which fetches the next module from the _loadQueue[] and
     initiates the module source loading
 
-  * @function _finalizeLoading() is called after the module was
-    loaded, and code inside the module was executed - so all module
+  * @function finalizeLoading() is called after the module was loaded,
+    and code inside the module was executed - so all module
     dependences are now known, and module initializer is declared as
     global init() function.  If some of the module's parents are not
     initialized yet, the newly loaded module state is set to 'waiting'
     until the parents are initialized, otherwise the module
     initialization is started
 
-  * @function _initialize() ('initializing' state) starts module
+  * @function initialize() ('initializing' state) starts module
     initializer function after all module dependences are initialized.
     After the module is initialized, its state is set to 'ready' and
     module children are notified about it. If some child is in
     'waiting' state, it will probably also go initializing (in case if
     all its other parents are also ready)
 
-  * @function _uninitialize() ('uninitializing' state) after the
-    module is not needed calls the module uninitialzier, and
-    afterwards the module will be destroyed
+  * @function uninitialize() ('uninitializing' state) after the module
+    is not needed calls the module uninitialzier, and afterwards the
+    module will be destroyed
 
-  * @function _destroy() removes all module data and notifies parents
+  * @function destroy() removes all module data and notifies parents
     that they are not needed by the module anymore (so they could go
     uninitialize if they are not used by anything else)
 
-  * @function _invalidate() calls the failure callback and destroys
-    the module when it could not be loaded (or circular dependence is
-    discovered).  All children are also recursively invalidated
+  * @function invalidate() calls the failure callback and destroys the
+    module when it could not be loaded (or circular dependence is
+    discovered), all children are also recursively invalidated
 
   Each module keeps a list of statistics-arrays where the module
-  should be tracked. When a kernel.Module object is created, there is
-  only one such array, kernel._statistics, which is returned by the
-  kernel.getStatistics() function.  But if a user requests a
-  statistics for a some particular module using getStatistics()
-  method, the personal statistics array for that module is created,
-  and all module's parents are notified about they should participate
-  in that statiscs (_addStats() method).
+  should be tracked. When a kernel._Module object is created, there is
+  only one such array, kernel._stats, which is returned by the
+  kernel.getStats() function.  But if a user requests a statistics for
+  a some particular ticket, the personal stats array for that ticket
+  is created, and all ticket's modules along with their parents are
+  notified about they should participate in that statiscs (addStats()
+  method).
 
 *********************************************************************/
 
@@ -63,7 +63,7 @@ if (typeof kernel == 'undefined') {
 init = null;
 uninit = null;
 
-kernel.moduleStates = {
+kernel.states = {
     created        : 0,  // initial state, not yet loaded
     loading        : 1,  // being loaded at the moment
     waiting        : 2,  // loaded; waits for the parents to initialize
@@ -83,159 +83,95 @@ include = function( path ) {
     var child = kernel._activeModule;
     if (child) {
         path = kernel._getAbsolute( path, child.path );
-        if ( child._isSubChild(path) ) {
+        if ( child.isSubChild(path) ) {
             kernel._throw( 'Circular dependence: ' + path );
-            child._invalidate();
+            child.invalidate();
         } else {
             var module = kernel._getOrCreateModule(path);
-            module._addChild(child);
+            module.addChild(child);
 
-            // participating in child's statistics
-            for ( var i=0; i < child._statsList.length; i++ ) {
-                module._addStats( child._statsList[i] );
+            // participating in child's stats
+            for ( var i = 0; i < child._statsList.length; i++ ) {
+                module.addStats( child._statsList[i] );
             }
         }
     }  // else include() was not called in the module head
-};
+}
 
 
 
 /**
- * @function kernel.require() notifies the kernel that a module with
- * the given path is requested.  Kernel loads and initializes the
- * module and its dependences (if the module has not been loaded yet),
- * and then launches the provided callback
+ * @function kernel.require() notifies the kernel that a set of module
+ * with the given paths are requested.  Kernel loads and initializes
+ * the modules and their dependences (if the modules have not been
+ * loaded yet), and then launches the provided callback
  *
- * @param {String} path Absolute path to the module source (or an
+ * @param {Array} paths absolute path to the module source (or an
  * array of such paths)
  * @param {Function} sCb callback to call after all modules are ready
  * @param {Function} fCb callback to call if some of the required
  * modules could not be loaded/initialized (wrong path or circular
  * dependence)
  *
- * @returns {Object} Reservation ticket (or an array of tickets)
+ * @returns {kernel._Ticket} reservation ticket
  */
 kernel.require = function( paths, sCb, fCb ) {
     if ( typeof paths == 'string' ) {
         // single module required
-        return kernel.require( [paths], sCb, fCb )[0];
-    } else {
-        var tickets = [];
-
-        // sCb called after all modules ready
-        var singleSCb = null;
-        if (sCb) {
-            var modulesLeft = paths.length;
-            singleSCb = function() {
-                modulesLeft--;
-                if (!modulesLeft) {
-                    sCb();
-                }
-            };
-        }
-
-        // fCb called after single failure
-        var failure = false;
-        var singleFCb = function( path ) {
-            if (!failure) {
-                failure = true;
-                kernel.release(tickets);
-                if (fCb) {
-                    fCb(path);
-                }
-            }
-        };
-
-        var module;
-        for ( var i = 0; i < paths.length; i++ ) {
-            module = kernel._getOrCreateModule( paths[i] );
-            tickets.push(
-                module._require( singleSCb, singleFCb )
-            );
-        }
-
-        return tickets;
+        paths = [paths];
     }
-};
+
+    var modules = [];
+    for ( var i = 0; i < paths.length; i++ ) {
+        modules.push( kernel._getOrCreateModule(paths[i]) );
+    }
+
+    return new kernel._Ticket( modules, sCb, fCb );
+}
 
 
 
 /**
- * @function kernel.release() notifies the kernel that a module
- * corresponding to the given ticket is not required anymore. Ticket
- * object is returned by the kernel.require() function
+ * @function kernel.release() notifies the kernel that the modules
+ * corresponding to the given ticket are not needed anymore
  *
- * @param {Object} ticket reservation ticket to be released (or an
- * array of tickets)
+ * @param {kernel._Ticket} ticket to be released
  */
 kernel.release = function( ticket ) {
-    if ( typeof ticket.module != 'undefined' ) {
-        // single ticket provided
-        ticket.module._release( ticket );
-    } else {
-        for ( var i = 0; i < ticket.length; i++ ) {
-            ticket[i].module._release( ticket[i] );
-        }
-    }
-};
+    ticket._release();
+}
 
 
 
 /**
- * @function kernel.getModulesList()
- * @returns {Array} array of the modules known to the kernel
+ * @function kernel.getStats() returns the statistics for the given
+ * reservation ticket, or for the whole kernel if no ticket provided
+ * 
+ * @param {kernel._Ticket} ticket which to get statistics for
+ * 
+ * @returns {Array} statistics array
  */
-kernel.getModulesList = function() {
-    return kernel._modules;
-};
+kernel.getStats = function( ticket ) {
+    return ticket ? ticket._getStats() : kernel._stats
+}
 
 
 
 /**
- * @function kernel.getModule() searches for a module by its path
- *
- * @param {String} path absolute path of a module to search for
- *
- * @returns {kernel.Module} module object with the path, null if none
- */
-kernel.getModule = function( path ) {
-    var result = null;
-    for ( var i = 0; i < kernel._modules.length; i++ ) {
-        if ( kernel._modules[i].path == path ) {
-            result = kernel._modules[i];
-        }
-    }
-
-    return result;
-};
-
-
-
-/**
- * @function kernel.getStatistics()
- * @returns {Array} statistics array tracking all known modules
- */
-kernel.getStatistics = function() {
-    return kernel._statistics;
-};
-
-
-
-/**
- * @type kernel.Module represents a single kernel module. Created by
+ * @type kernel._Module represents a single kernel module. Created by
  * the kernel when the module is requested for the first time using
  * include() or kernel.require() functions
  *
  * @param {String} path path of the newly created module
  *
  * @property path absolute path to the module source
- * @property state state of the module, one of kernel.moduleStates
+ * @property state state of the module, one of kernel.states
  * @property children[] keeps the modules which included this module
  * @property parents[] keeps the modules included by this module
  */
-kernel.Module = function( path ) {
+kernel._Module = function( path ) {
     this.path = path;
-    this.state = this._states.created;
+    this.state = kernel.states.created;
     this.children = [];
     this.parents  = [];
     this._sCallbacks = [];
@@ -244,47 +180,45 @@ kernel.Module = function( path ) {
     kernel._modules.push(this);
     kernel._loadQueue.push(this);
     this._statsList = []; // list of statistics where participating
-    this._addStats( kernel._statistics );
-};
-
-kernel.Module.prototype._states = kernel.moduleStates;  // shortcut
+    this.addStats( kernel._stats );
+}
 
 
 
 /**
- * @function _load() ('loading' state) loads the module source code,
+ * @function load() ('loading' state) loads the module source code by
  * calling the platform-dependent script loading function
  */
-kernel.Module.prototype._load = function() {
-    this._setState( this._states.loading );
+kernel._Module.prototype.load = function() {
+    this.setState( kernel.states.loading );
 
     var me = this;
     var sCb = function() {
-        if ( me.state == me._states.loading ) {
-            me._finalizeLoading();
+        if ( me.state == kernel.states.loading ) {
+            me.finalizeLoading();
         }  // otherwise module could already be invalidated
            // because of the discovered circular dependence
     }
     
     var fCb = function() {
-        if ( me.state == me._states.loading ) {
+        if ( me.state == kernel.states.loading ) {
             // loading failure
-            me._invalidate();
+            me.invalidate();
         }  // otherwise module could already be invalidated
            // because of the discovered circular dependence
     }
     
     kernel._platform.load( this.path, sCb, fCb );
-};
+}
 
 
 
 /**
- * @function _invalidate() destroys the module and calls _invalidate()
+ * @function invalidate() destroys the module and calls invalidate()
  * for all children. Called when there is a problem with loading the
  * module (or some of the module's parents)
  */
-kernel.Module.prototype._invalidate = function() {
+kernel._Module.prototype.invalidate = function() {
     if ( this.state == null ) {
         // already invalidated for some other reason
         return;
@@ -299,37 +233,37 @@ kernel.Module.prototype._invalidate = function() {
     for ( var i = 0; i < this.children.length; i++ ) {
         child = this.children[i];
         // thread prevents the call stack growth
-        kernel._platform.thread( child._invalidate, child );
+        kernel._platform.thread( child.invalidate, child );
     }
-    
-    this._destroy();
+
+    this.destroy();
 
     if ( this == kernel._activeModule ) {
         kernel._loadNext();
     }
-};
+}
 
 
 
 /**
- * @function _finalizeLoading() takes the decision on what to do after
- * the module is loaded; called after the module is loaded
+ * @function finalizeLoading() takes the decision on what to do after
+ * the module is loaded
  */
-kernel.Module.prototype._finalizeLoading = function() {
+kernel._Module.prototype.finalizeLoading = function() {
     if ( typeof init != 'function' && this.parents.length == 0 ) {
         // no init(), no include()
         kernel._throw( 'Initializer missing: ' + this.path );
-        this._invalidate();
+        this.invalidate();
     } else {
         this._init = init;
         this._uninit = uninit;
 
-        if (!this._isNeeded()) {
-            this._destroy();
-        } else if ( this._areParentsReady() ) {
-            this._initialize();
+        if (!this.isNeeded()) {
+            this.destroy();
+        } else if ( this.areParentsReady() ) {
+            this.initialize();
         } else {
-            this._setState( this._states.waiting );
+            this.setState( kernel.states.waiting );
         }
 
         kernel._loadNext();
@@ -339,11 +273,11 @@ kernel.Module.prototype._finalizeLoading = function() {
 
 
 /**
- * @function  _initialize()  ('initializing'  state)  performs  module
+ * @function  initialize()  ('initializing'  state)  performs  module
  * initialization, notifies children and decides what to do next
  */
-kernel.Module.prototype._initialize = function() {
-    this._setState( this._states.initializing );
+kernel._Module.prototype.initialize = function() {
+    this.setState( kernel.states.initializing );
 
     // gives time for statistics meters to update
     kernel._platform.thread(
@@ -352,29 +286,29 @@ kernel.Module.prototype._initialize = function() {
                 try {
                     this._init();
                 } catch(e) {
-                    this._invalidate();
+                    this.invalidate();
                     kernel._throw(e);
                 }
             }
 
-            // init() is not cleared at this point, since it may will
-            // be needed after the module was initialized, but then
-            // requested agan
+            // init() is not cleared at this point, since it will
+            // probably be needed after the module was initialized,
+            // but then requested agan
 
             if ( this.state != null ) {
-                if ( !this._isNeeded() ) {
-                    this._uninitialize();
+                if ( !this.isNeeded() ) {
+                    this.uninitialize();
                 } else {
-                    this._setState( this._states.ready );
+                    this.setState( kernel.states.ready );
                     while ( this._sCallbacks.length>0 ) {
                         ( this._sCallbacks.shift() )();
                     }
 
                     // initializing children
                     for ( var i = 0; i < this.children.length; i++ ) {
-                        if ( this.children[i].state == this._states.waiting &&
-                             this.children[i]._areParentsReady() ) {
-                            this.children[i]._initialize();
+                        if ( this.children[i].state == kernel.states.waiting &&
+                             this.children[i].areParentsReady() ) {
+                            this.children[i].initialize();
                         }
                     }
                 }
@@ -382,23 +316,23 @@ kernel.Module.prototype._initialize = function() {
         },
         this
     );
-};
+}
 
 
 
 /**
- * @function _uninitialize()  ('uninitializing' state) performs module
+ * @function uninitialize()  ('uninitializing' state) performs module
  * uninitialization, then destroys the module
  * 
- * Remark: the module is not invalidated in case of uninitializer
- * failure, since the module is going to be destroyed anyway. If the
- * module will be needed again after uninitializer failure, the
- * initializer will simply be relaunched without invalidation, because
- * otherwise the module would only work once - which is not clear and
- * not reasonable
+ * The module is not invalidated in case of uninitializer failure,
+ * since the module is going to be destroyed anyway. If the module
+ * will be needed again after uninitializer failure, the initializer
+ * will simply be relaunched without invalidation, because otherwise
+ * the module would only work once - which is not clear and not
+ * reasonable
  */
-kernel.Module.prototype._uninitialize = function() {
-    this._setState( this._states.uninitializing );
+kernel._Module.prototype.uninitialize = function() {
+    this.setState( kernel.states.uninitializing );
 
     // gives time for statistics meters to update
     kernel._platform.thread(
@@ -406,10 +340,10 @@ kernel.Module.prototype._uninitialize = function() {
             // will be performed even if uninitializer is broken
             kernel._platform.thread(
                 function() {
-                    if ( this._isNeeded() ) {
-                        this._initialize();
+                    if ( this.isNeeded() ) {
+                        this.initialize();
                     } else {
-                        this._destroy();
+                        this.destroy();
                     }
                 },
                 this
@@ -421,25 +355,25 @@ kernel.Module.prototype._uninitialize = function() {
         },
         this
     );
-};
+}
 
 
 
 /**
- * @function _destroy() clears module data, starts uninitialization of
+ * @function destroy() clears module data, starts uninitialization of
  * the parents which are not needed anymore
  */
-kernel.Module.prototype._destroy = function() {
-    this._setState( null );
+kernel._Module.prototype.destroy = function() {
+    this.setState(null);
 
-    // cloning the parents since _removeChild could change the list
+    // cloning the parents since removeChild could change the list
     var i, parents = [];
     for ( i = 0; i < this.parents.length; i++ ) {
         parents[i] = this.parents[i];
     }
     
     for ( i = 0; i < parents.length; i++ ) {
-        parents[i]._removeChild(this);
+        parents[i].removeChild(this);
     }
 
     // uncounting module in all statistics
@@ -460,7 +394,7 @@ kernel.Module.prototype._destroy = function() {
     this._statsList = null;
     this._sCallbacks = null;
     this._fCallbacks = null;
-};
+}
 
 
 
@@ -470,7 +404,7 @@ kernel.Module.prototype._destroy = function() {
  * 
  * @param {Module} child to link with
  */
-kernel.Module.prototype._addChild = function( child ) {
+kernel._Module.prototype.addChild = function( child ) {
     this.children.push(child);
     child.parents.push(this);
 }
@@ -478,12 +412,12 @@ kernel.Module.prototype._addChild = function( child ) {
 
 
 /**
- * @function _removeChild() unlinks the module with its child, starts
+ * @function removeChild() unlinks the module with its child, starts
  * module unloading/destruction if it is not needed anymore
  * 
  * @param {Module} child to unlink with
  */
-kernel.Module.prototype._removeChild = function( child ) {
+kernel._Module.prototype.removeChild = function( child ) {
     for ( var i = 0; i < this.children.length; i++ ) {
         if ( this.children[i] == child ) {
             this.children.splice(i,1);
@@ -498,12 +432,12 @@ kernel.Module.prototype._removeChild = function( child ) {
         }
     }
 
-    if ( !this._isNeeded() ) {
-        if ( this.state == this._states.waiting ) {
+    if ( !this.isNeeded() ) {
+        if ( this.state == kernel.states.waiting ) {
             // thread prevents call stack growth
-            kernel._platform.thread( this._destroy, this );
-        } else if ( this.state == this._states.ready ) {
-            this._uninitialize();
+            kernel._platform.thread( this.destroy, this );
+        } else if ( this.state == kernel.states.ready ) {
+            this.uninitialize();
         }
     }
 }
@@ -511,57 +445,57 @@ kernel.Module.prototype._removeChild = function( child ) {
 
 
 /**
- * @function getStatistics() returns the module statistics
- * array (initializes statistics tracking if needed)
- *
- * @returns {Array} module's statistics array
- */
-kernel.Module.prototype.getStatistics = function() {
-    if ( typeof this._statistics == 'undefined' ) {
-        this._statistics = [];
-        for ( var i in this._states ) {
-            this._statistics[ this._states[i] ] = 0;
-        }
-
-        this._addStats( this._statistics );
-    }
-
-    return this._statistics;
-};
-
-
-
-/**
- * @function _addStats() recursively adds a new statistics to the
+ * @function addStats() recursively adds the given statistics to the
  * _statsList of this and all parent modules.  From this point, the
  * module and its parents will be counted in the mentioned statistics
  *
- * @param {Array} statistics array where a module should be counted
+ * @param {Array} stats array where a module should be counted
  */
-kernel.Module.prototype._addStats = function( statistics ) {
+kernel._Module.prototype.addStats = function( stats ) {
     for ( var i = 0; i < this._statsList.length; i++ ) {
-        if ( this._statsList[i] == statistics ) {
+        if ( this._statsList[i] == stats ) {
             return; // already counted in given statistics
         }
     }
 
-    this._statsList.push(statistics);
-    statistics[this.state]++;
+    this._statsList.push(stats);
+    stats[this.state]++;
 
     for ( i = 0; i < this.parents.length; i++ ) {
-        this.parents[i]._addStats(statistics);
+        this.parents[i].addStats(stats);
     }
-};
+}
 
 
 
 /**
- * @function _setState() sets the module state to the given value,
- * updates the statistics arrays the module is participatde in
+ * @function removeStats() checks if the module is counted in given
+ * statistics, and uncounts in it. Used when some ticket with counted
+ * satistics was released, and the module is not needed to participate
+ * in it anymore
+ * 
+ * @param {Array} stats to stop participating in
+ */
+kernel._Module.prototype.removeStats = function( stats ) {
+    for ( var i = 0; i < this._statsList.length; i++ ) {
+        if ( this._statsList[i] == stats ) {
+            this._statsList.splice(i,1);
+            break;
+        }
+    }
+
+    // parenst will be handled by calling this method for each module
+}
+
+
+
+/**
+ * @function setState() sets the module state to the given value,
+ * updates the statistics arrays the module is participated in
  *
  * @param {Number} state new state of the module
  */
-kernel.Module.prototype._setState = function( state ) {
+kernel._Module.prototype.setState = function( state ) {
     var oldState = this.state;
     this.state = state;
 
@@ -569,12 +503,12 @@ kernel.Module.prototype._setState = function( state ) {
         this._statsList[i][oldState]--;
         this._statsList[i][this.state]++;
     }
-};
+}
 
 
 
 /**
- * @function _isSubChild() recursively checks if at least one of
+ * @function isSubChild() recursively checks if at least one of
  * module's (sub)children has the given path. Used to find out
  * the circular dependences
  *
@@ -583,65 +517,63 @@ kernel.Module.prototype._setState = function( state ) {
  * @returns {Boolean} true if there is a (sub)child having the given
  * path, false otherwise
  */
-kernel.Module.prototype._isSubChild = function( path ) {
+kernel._Module.prototype.isSubChild = function( path ) {
     for ( var i = 0; i < this.children.length; i++ ) {
         if ( this.children[i].path == path ||
-             this.children[i]._isSubChild(path) ) {
+             this.children[i].isSubChild(path) ) {
              return true;
         }
     }
 
     return false;
-};
+}
 
 
 
 /**
- * @function _isNeeded() reports whether the module is still needed
+ * @function isNeeded() reports whether the module is still needed
  * (included by some other module which is still in use, or required
- * with a ticket which has not yet been released)
+ * with a ticket which was not released yet)
  *
  * @returns {Boolean} true if the module is used, false otherwise
  */
-kernel.Module.prototype._isNeeded = function() {
+kernel._Module.prototype.isNeeded = function() {
     return this._tickets.length > 0 || this.children.length > 0;
-};
+}
 
 
 
 /**
- * @function _areParentsReady() reports whether all of the module's
- * parents are initialized and thus ready to use
+ * @function areParentsReady() reports whether all of the module's
+ * parents are initialized
  *
  * @returns {Boolean} true if all parents are initialized, false
  * otherwise
  */
-kernel.Module.prototype._areParentsReady = function() {
+kernel._Module.prototype.areParentsReady = function() {
     for ( var i = 0; i < this.parents.length; i++ ) {
-        if ( this.parents[i].state != this._states.ready ) {
+        if ( this.parents[i].state != kernel.states.ready ) {
             return false;
         }
     }
     return true;
-};
+}
 
 
 
 /**
- * @function _require() tells a module that it was required and thus
- * could not be uninitialized until it is released, generates module
- * reservation ticket; calls the callback after the module is ready
- *
- * @param {Function} sCb callback to call after the module is ready
- * @param {Function} fCb callback to call if the module has failed
- *
- * @returns {Object} module reservation ticket
+ * @function require() tells a module that it was required by some
+ * ticket and thus could not be uninitialized until the ticket is
+ * released
+ * 
+ * @param {kernel._Ticket} ticket which required a module
+ * @param {Function} sCb to call after the module is ready
+ * @param {Function} fCb to call upon failure
  */
-kernel.Module.prototype._require = function( sCb, fCb ) {
-    var ticket = { module:this };
+kernel._Module.prototype.require = function( ticket, sCb, fCb ) {
     this._tickets.push(ticket);
 
-    if ( this.state == this._states.ready ) {
+    if ( this.state == kernel.states.ready ) {
         if (sCb) {
             // broken callbacks should not break the call stack
             kernel._platform.thread(sCb);
@@ -655,19 +587,17 @@ kernel.Module.prototype._require = function( sCb, fCb ) {
             this._fCallbacks.push(fCb);
         }
     }
-
-    return ticket;
-};
+}
 
 
 
 /**
- * @function _release() removes the given ticket and unloads the
- * module if it is not needed anymore
+ * @function release() is called when the module is not needed anymore
+ * for the given ticket
  *
- * @param {Object} ticket module reservation ticket to release
+ * @param {kernel._Ticket} ticket which does not need the module
  */
-kernel.Module.prototype._release = function( ticket ) {
+kernel._Module.prototype.release = function( ticket ) {
     for ( var i = 0; i < this._tickets.length; i++ ) {
         if ( this._tickets[i] == ticket ) {
             this._tickets.splice(i,1);
@@ -675,42 +605,137 @@ kernel.Module.prototype._release = function( ticket ) {
         }
     }
 
-    if ( !this._isNeeded() ) {
-        if ( this.state == this._states.waiting ) {
-            this._destroy();
-        } else if ( this.state == this._states.ready ) {
-            this._uninitialize();
+    if ( !this.isNeeded() ) {
+        if ( this.state == kernel.states.waiting ) {
+            this.destroy();
+        } else if ( this.state == kernel.states.ready ) {
+            this.uninitialize();
         }
     }
-};
+}
+
+
+
+/**
+ * @type kernel._Ticket represents a single act of a module loading by
+ * a kernel.require() function. Instance of this object is returned by
+ * kernel.require()
+ * 
+ * @param {Array} modules list of kernel._Modules for a ticket
+ * @param {Function} sCb to call when all modules are ready
+ * @param {Function} fCb to call upon failure
+ */
+kernel._Ticket = function( modules, sCb, fCb ) {
+    this._modules = modules;
+    this._sCb = sCb || null;
+    this._fCb = fCb || null;
+    this._load();
+}
+
+
+
+/**
+ * @function _load() loads all ticket modules
+ */
+kernel._Ticket.prototype._load = function() {
+    var me = this;
+    var singleSCb = null;
+    if (this._sCb) {
+        var modulesLeft = this._modules.length;
+        singleSCb = function() {
+            modulesLeft--;
+            if (!modulesLeft) {
+                me._sCb();
+            }
+        };
+    }
+
+    // fCb called after single failure
+    var failure = false;
+    var singleFCb = function( path ) {
+        if (!failure) {
+            failure = true;
+            kernel.release(me);
+            if (me._fCb) {
+                me._fCb(path);
+            }
+        }
+    };
+
+    for ( var i = 0; i<this._modules.length; i++ ) {
+        this._modules[i].require( this, singleSCb, singleFCb );
+    }
+}
+
+
+
+/**
+ * @function _release() releases the ticket for all its modules
+ */
+kernel._Ticket.prototype._release = function() {
+    for ( var i = 0; i < this._modules.length; i++ ) {
+        this._modules[i].release(this);
+    }
+
+    // modules do not need to participate in the statistics anymore
+    if ( this._stats ) {
+        for ( i = 0; i < kernel._modules.length; i++ ) {
+            kernel._modules[i].removeStats( this._stats );
+        }
+    }
+}
+
+
+
+/**
+ * @function getStats() returns the ticket statistics array
+ * (initalizes statistics tracking if needed)
+ * 
+ * @returns {Array} ticket's statistics array
+ */
+kernel._Ticket.prototype._getStats = function() {
+    if (!this._stats) {
+        this._stats = [];
+        for ( var i in kernel.states ) {
+            this._stats[ kernel.states[i] ] = 0;
+        }
+
+        for ( i = 0; i < this._modules.length; i++ ) {
+            this._modules[i].addStats( this._stats );
+        }
+    }
+
+    return this._stats;
+}
 
 
 
 kernel._modules = [];        // list of all known modules
 kernel._activeModule = null; // currently loading module
 kernel._loadQueue = [];      // list of modules to be loaded
-kernel._statistics = [];     // keeps number of modules for each state
-for ( var i in kernel.moduleStates ) {
-    kernel._statistics[ kernel.moduleStates[i] ] = 0;
+kernel._stats = [];          // numbers of modules for each state
+for ( var i in kernel.states ) {
+    kernel._stats[ kernel.states[i] ] = 0;
 }
 
 
 
 /**
  * @function kernel._getAbsolute() converts the relative path given to
- * the include() to the absolute  path (which is either related to the
- * path of main.js module or starts from http:// or https://)
+ * the include() to the absolute path (which is either related to the
+ * server root, or starts from http:// or https://)
  *
- * @param {String} path of a module as gives to include()
+ * @param {String} path of a module as provided to include()
  * @param {String} childPath path of a module performing the include()
  *
  * @returns {String} absolute path of a module
  */
 kernel._getAbsolute = function( path, childPath ) {
     // concatinating path with the child's path (without the filename)
-    // path starting from 'http://' or 'https://' treated as absolute
+    // path starting from 'http://' or '/' treated as absolute
     if ( path.substr(0,7).toLowerCase() != 'http://' &&
-         path.substr(0,8).toLowerCase() != 'https://' ) {
+         path.substr(0,8).toLowerCase() != 'https://'&&
+         path.substr(0,1) != '/' ) {
         path = childPath.substr( 0, childPath.lastIndexOf('/')+1 ) + path;
     }
 
@@ -722,30 +747,36 @@ kernel._getAbsolute = function( path, childPath ) {
     } while ( newPath!=path );
 
     return path;
-};
+}
 
 
 
 /**
  * @function kernel._getOrCreateModule() searches for a module with
  * the given path, creates it if there is no such module found, and
- * returns the module
+ * returns the module object
  *
  * @param {String} path of the module to search for or create
  *
- * @returns {kernel.Module} found or newly created module
+ * @returns {kernel._Module} found or newly created module
  */
 kernel._getOrCreateModule = function( path ) {
-    var module = kernel.getModule(path);
+    var module = null;
+    for ( var i = 0; i < kernel._modules.length; i++ ) {
+        if ( kernel._modules[i].path == path ) {
+            module = kernel._modules[i];
+        }
+    }
+
     if (!module) {
-        module = new kernel.Module(path);
+        module = new kernel._Module(path);
         if ( !kernel._activeModule ) {
             kernel._loadNext();
         }
     }
 
     return module;
-};
+}
 
 
 
@@ -757,9 +788,9 @@ kernel._loadNext = function() {
     init = uninit = null;
     kernel._activeModule = kernel._loadQueue.pop() || null;
     if ( kernel._activeModule ) {
-        kernel._activeModule._load();
+        kernel._activeModule.load();
     }
-};
+}
 
 
 
