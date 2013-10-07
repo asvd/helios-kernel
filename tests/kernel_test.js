@@ -37,27 +37,6 @@ init = function() {
         }
     }
 
-    var statsOK = function() {
-        var stats = kernel.getStats();
-        var mods = kernel.getModulesList();
-        var realStats = [];
-        for ( var i in kernel.states ) {
-            realStats[ kernel.states[ i ] ] = 0;
-        }
-        for ( i = 0; i < mods.length; i++ ) {
-            realStats[ mods[i].state ]++;
-        }
-        for ( i = 0; i < stats.length; i++ ){
-            if ( stats[i] != realStats[i] ) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-
-
     //   LIST OF TESTS
     //
     // - starting point is at the end of file
@@ -69,60 +48,23 @@ init = function() {
 
 
 
-        newTest("require()'ing module");
+        newTest("Dynamically loading a module with a dependence");
         stage01ticket = kernel.require(
             dir + "/test01/test01.js", stage02
         );
     }
     var stage02 = function() {
         check( test01_1 );
-//        check( typeof( stage01ticket.module ) != "undefined" );
-//        var mod =  kernel.getModule( dir + "/test01/test01.js");
-//        check( stage01ticket.module === mod );
-
-
-
-        newTest("Initializing dependences");
         check( test01_2 );
-        
-        
-        /*
-        newTest("Dependence stored in module's parents[] array");
-        var test01mod = kernel.getModule( dir + "/test01/test01.js");
-        var parentFound = false;
-        for ( var i = 0; i < test01mod.parents.length; i++ ) {
-            if ( test01mod.parents[i].path == dir+"/test01/test01_2.js") {
-                parentFound = true;
-                break;
-            }
-        }
-        check( parentFound );
-
-
-        newTest("Module stored in dependence's children[] array");
-        var test01_2mod = kernel.getModule( dir + "/test01/test01_2.js");
-        var childFound = false;
-        for (i = 0; i < test01_2mod.children.length; i++) {
-            if (test01_2mod.children[i].path == dir+"/test01/test01.js") {
-                childFound = true;
-                break;
-            }
-        }
-        check( childFound );
-*/
 
 
 
-        newTest("Releasing ticket");
+        newTest("Releasing ticket with dependence");
         kernel.release( stage01ticket );
         setTimeout(stage3, 100);
     }
     var stage3 = function() {
         check( test01_1_uninit );
-
-
-
-        newTest( "Dependence aslo unloaded" );
         setTimeout( stage4, 300 );
     }
     var stage4 = function() {
@@ -130,7 +72,7 @@ init = function() {
 
 
 
-        newTest("Up-dir sequence in the include() argument");
+        newTest("Up-dir sequence path reslution for the include()");
         stage4ticket = kernel.require( dir + "/test02/test02.js", stage5 );
     }
     var stage5 = function() {
@@ -142,7 +84,7 @@ init = function() {
 
 
 
-        newTest("Module uninitialized but parents are still used");
+        newTest("Unitializing a module with parents still in use");
         stage6ticket = kernel.require( dir + "/test03/test03_1.js", stage7 );
     }
     var stage7 = function() {
@@ -154,15 +96,11 @@ init = function() {
     }
     var stage9 = function() {
         check( test03_1_uninit );
-
-
-
-        newTest( "Preserve uninitialization of still used parent" );
         check( !test03_common_uninit );
 
 
 
-        newTest("Unloading dependence with uninitialized children");
+        newTest("Finally releasing dependence");
         kernel.release(stage7ticket);
         setTimeout( stage10, 300 );
     }
@@ -214,7 +152,7 @@ init = function() {
 
 
 
-        newTest( "Loading several modules at once with one invalid module" );
+        newTest( "Loading several modules with one invalid module" );
         test04a_module1_uninitialized = "no";
         test04a_module1_initialized = "no";
         stage10_6ticket = kernel.require(
@@ -243,23 +181,13 @@ init = function() {
                  test04a_module1_initialized == "yes" ) ||
                ( test04a_module1_uninitialized == "no" &&
                  test04a_module1_initialized == "no" ) );
-
-        /*
-        check(
-            ( kernel.getModule( dir+"/test04a/module1.js" ) == null ) &&
-            ( kernel.getModule( dir+"/test04a/module2.js" ) == null ) &&
-            ( kernel.getModule( dir+"/test04a/module3.js" ) == null ) &&
-            ( kernel.getModule( dir+"/test04a/module3_dep.js" ) == null ) &&
-            ( kernel.getModule( dir+"/test04a/noSuchModule.js" ) == null )
-        );
-         */
         stage10_8();
     }
     var stage10_8 = function() {
 
 
 
-        newTest( "Loading several modules with invalid dependences" );
+        newTest( "Loading several modules with invalid dependence" );
         test04a_module1_uninitialized = "no";
         test04a_module1_initialized = "no";
         stage10_8ticket = kernel.require(
@@ -289,30 +217,19 @@ init = function() {
                  test04a_module1_initialized == "yes" ) ||
                ( test04a_module1_uninitialized == "no" &&
                  test04a_module1_initialized == "no" ) );
-        /*
-        check(
-            ( kernel.getModule( dir+"/test04a/module1.js" ) == null ) &&
-            ( kernel.getModule( dir+"/test04a/module2.js" ) == null ) &&
-            ( kernel.getModule( dir+"/test04a/module3.js" ) == null ) &&
-            ( kernel.getModule( dir+"/test04a/module3_dep.js" ) == null ) &&
-            ( kernel.getModule( dir+"/test04a/invalid_dep1.js" ) == null ) &&
-            ( kernel.getModule( dir+"/test04b/invalid_dep2.js" ) == null )
-        );
-         */
-
         stage10_9();
     }
     var stage10_9 = function() {
 
 
 
-        newTest( "Releasing released tickets" );
+        newTest( "Releasing tickets with common modules" );
         kernel.release( stage10_6ticket );
         kernel.release( stage10_8ticket );
 
 
 
-        newTest( "Stats ready modules counter" );
+        newTest( "Statistics: counting number of ready modules after require()" );
         tests.readyNr = kernel.getStats()[ kernel.states.ready ];
         stage10_6ticket = kernel.require( dir + "/test05/test05.js", stage11 );
     }
@@ -325,17 +242,18 @@ init = function() {
 
 
 
-        newTest( "Stats ready modules counter (after unloading)" );
+        newTest( "Statistics: restoring initial nmuber of ready modules after ticket release" );
         kernel.release( stage10_6ticket );
         setTimeout( stage14, 3000 );
     }
     var stage14 = function() {
         var newReadyNr = kernel.getStats()[ kernel.states.ready ];
         check( newReadyNr == tests.readyNr );
-
-
-
-        newTest("Uninitializing before calling a callback, 1 time");
+        
+        
+        
+        
+        newTest("Releasing ticket in the callback");
         stage14ticket = kernel.require(
             dir+"/test06/test06.js",
             function() {
@@ -349,7 +267,7 @@ init = function() {
 
 
 
-        newTest("Uninitializing before calling a callback, 2 times");
+        newTest("Releasing tickets in the callbacks, reversed order");
         stage14_1ticket = kernel.require(
             dir+"/test06/test06.js",
             function() {
@@ -373,7 +291,7 @@ init = function() {
 
 
 
-        newTest("Preserving module loaded more than once from being unloaded");
+        newTest("Moule not unloaded if some of the tickets are not released");
         stage14_2ticket1 = kernel.require(
             dir+"/test07/test07.js",
             function() {
@@ -395,22 +313,20 @@ init = function() {
     var stage15 = function() {
         check( test07_init );
         check( !test07_uninit );
-//        check( statsOK() );
 
 
 
-        newTest("Module unloading after all tickets released");
+        newTest("Module unloaded after all tickets released");
         kernel.release( stage14_2ticket2 );
         kernel.release( stage14_2ticket3 );
         setTimeout( stage15_1, 100 );
     }
     var stage15_1 = function() {
         check( test07_uninit );
-//        check( statsOK() );
 
 
 
-        newTest("Requiring module simultaneously with the release");
+        newTest("Requiring and releasing a module simultaneously");
         stage15_1ticket = kernel.require(
             dir+"/test06/test06.js",
             stage15_2
@@ -438,7 +354,7 @@ init = function() {
 
         
 
-        newTest("Loading broken module");
+        newTest("Loading module with a syntax error");
         stage16ticket = kernel.require(
             dir+"/test08/broken.js",
             stage16_fail,
@@ -458,7 +374,7 @@ init = function() {
 
 
 
-        newTest("Loading module with a broken initializer");
+        newTest("Loading module with a reference error in initializer");
         test08_valid_initialized = false;
         stage16_1ticket = kernel.require(
             dir+"/test08/broken_init.js",
@@ -476,12 +392,11 @@ init = function() {
     }
     var stage16_2 = function() {
         check( !test08_valid_initialized );
-//        check( kernel.getModule( dir+"/test08/valid.js" ) == null );
         kernel.release(stage16_1ticket);
 
 
 
-        newTest( "Uninitializing a module with a broken uninitializer" );
+        newTest("Unloading module with a reference error in uninitializer");
         stage16_2ticket = kernel.require(
             dir+"/test08/broken_uninit.js",
             stage16_3success,
@@ -504,12 +419,10 @@ init = function() {
     }
     var stage16_5 = function() {
         check( !test08_valid_initialized );
-//        check( kernel.getModule( dir+"/test08/valid.js" ) == null );
-//        check( kernel.getModule( dir+"/test08/broken_uninit.js" ) == null );
 
 
 
-        newTest("Preventing loading of a module twice");
+        newTest("Loading a module twice (should be initialized once)");
         stage16_5ticket1 = kernel.require(
             dir+"/test10/test10.js",
             function() {
@@ -522,79 +435,20 @@ init = function() {
     }
     var stage17 = function() {
         check( test10_init == 1 );
-//        check( statsOK() );
 
 
 
-        newTest("Unloading loaded twice");
+        newTest("Unloading the module loaded twice");
         kernel.release( stage16_5ticket1 );
         kernel.release( stage16_5ticket2 );
         setTimeout( stage18, 100 );
     }
     var stage18 = function() {
-//        var mod = kernel.getModule(dir+"/test10/test10.js")
         check( test10_uninit );
-//        check( mod === null);
 
 
 
-        /*
-        newTest("kernel.getModule() function");
-        stage18ticket = kernel.require( dir + "/test10/test10.js", stage19);
-    }
-    var stage19 = function() {
-        var mod = kernel.getModule(dir+"/test10/test10.js");
-        check( mod.state == kernel.states.ready);
-        kernel.release( stage18ticket );
-        setTimeout( stage20, 500 );
-    }
-    var stage20 = function() {
-        var mod = kernel.getModule(dir+"/test10/test10.js");
-        check( mod === null);
-         */
-
-
-
-        newTest( "Module idled on demand before dependence initialized" );
-        test12_2_uninit = false;
-        test12_2_init = false;
-        test12_1_uninit = false;
-        stage20ticket = kernel.require( dir + "/test12/test12_1.js");
-        setTimeout( stage21, 10 );
-    }
-    var stage21 = function() {
-        kernel.release( stage20ticket );
-        setTimeout( stage22, 100 );
-    }
-    var stage22 = function() {
-        check( !test12_1_uninit ); // test12_1 not unloaded (it was not loaded)
-        check( !test12_2_init ); // test12_2 not yet initialized
-
-
-
-        newTest( "Dependence not yet unloaded" );
-        check( !test12_2_uninit ); // test12_2_uninit not yet started
-//        check( statsOK() );
-
-
-
-        newTest( "Uninitialize module if it is not needed after init" );
-        test13_2_uninit = false;
-        test13_2_init = false;
-        stage22ticket = kernel.require( dir+"/test13/test13_1.js");
-        setTimeout( stage23, 1000 ); // maybe tune the delay, it should be called after init of test13_2  started
-    }
-    var stage23 = function() {
-        kernel.release( stage22ticket );
-        setTimeout( stage24, 100 );
-    }
-    var stage24 = function() {
-        check( test13_2_init );
-//        check( statsOK() );
-
-
-
-        newTest( "Loading back once again needed module after uninit()" );
+        newTest( "Requesting again the module which was just released" );
         stage24ticket1 = kernel.require(
             dir+"/test14/test14_1.js",
             function() {
@@ -615,12 +469,11 @@ init = function() {
     var stage25 = function() {
         check( test14_init );
         check( !test14_uninit );
-//        check( statsOK() );
         kernel.release( stage24ticket2 );
 
 
 
-        newTest("Not initializing never used module");
+        newTest("Releasing a module right after require (should not initialize)");
         test15_init = false;
         stage25ticket = kernel.require( dir + "/test15/test15.js");
         kernel.release( stage25ticket );
@@ -628,16 +481,14 @@ init = function() {
     }
     var stage26 = function() {
         check( !test15_init );
-//        check( statsOK() );
 
 
 
-        newTest("Error simulation: include() inside the code");
+        newTest("Error simulation: include() inside initializer");
         include(dir+"/test15/test15.js");
         setTimeout( stage27, 300 );
     }
     var stage27 = function() {
-//        check( kernel.getModule(dir+"/test15/test15.js") === null );
         check( !test15_init );
 
 
@@ -647,7 +498,6 @@ init = function() {
         setTimeout( stage28, 300 );
     }
     var stage28 = function() {
-//        check( statsOK() );
 
 
 
@@ -668,7 +518,6 @@ init = function() {
         stage29();
     }
     var stage29 = function() {
-//        check( statsOK() );
         kernel.release( stage28ticket );
         setTimeout( stage30, 100 );
     }
@@ -697,7 +546,7 @@ init = function() {
 
 
 
-        newTest("Error simulation: loading non-existing dependence");
+        newTest("Error simulation: loading module with non-existing dependence");
         test19_init = false;
         stage30_1ticket = kernel.require(
             dir + "/test19/test19.js",
@@ -706,7 +555,7 @@ init = function() {
         );
     }
     var stage31_1_fail = function() {
-        // callback should not be called if module is not working
+        // callback should not be called if the module was not initialized
         check(false);
         stage31();
     }
@@ -716,7 +565,6 @@ init = function() {
     }
     var stage31 = function() {
         check( !test19_init ); // should not init ignoring non-existing dependence
-//        check( statsOK() );
         kernel.release( stage30_1ticket );
         setTimeout( stage32, 100 );
     }
@@ -728,12 +576,10 @@ init = function() {
         stage32ticket = kernel.require(
             dir + "/test20/main.js", stage33
         );
-        tests.updatePerStats();
+        tests.updatePerStats(stage32ticket);
     }
     var stage33 = function() {
         check( true );
-        var total = kernel.getModulesList().length;
-        tests.print( "[" + total + " modules total] " );
         kernel.release( stage32ticket );
         setTimeout( stage34, 100 );
     }

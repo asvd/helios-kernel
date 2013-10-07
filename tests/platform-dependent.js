@@ -87,15 +87,14 @@ init = function() {
         body.appendChild(perstats);
 
         var oldPerStats = "";
-        tests.updatePerStats = function() {
-            var mod = kernel.getModule("/tests/kernel/test20/main.js");
+        tests.updatePerStats = function(ticket) {
             var result = "";
-            if ( mod !== null ) {
-                var modStats = mod.getStatistics();
-                for ( var i in kernel.moduleStates ) {
-                    result += "" + i + ": " +modStats[ kernel.moduleStates[ i ] ]+ "<br/>";
-                }
+
+            var modStats = kernel.getStats(ticket);
+            for ( var i in kernel.states ) {
+                result += "" + i + ": " +modStats[ kernel.states[i] ]+ "<br/>";
             }
+
             if ( oldPerStats != result )  {
                 perstats.innerHTML = oldPerStats = result;
             }
@@ -128,7 +127,7 @@ init = function() {
         var oldMods = "";
         var updateMods = function() {
             var result = "";
-            var modules = kernel.getModulesList();
+            var modules = kernel._modules;
             for ( var i=0; i < modules.length; i++) {
                 result += "" + modules[i].path + ": " + modules[i].state+ "<br/>";
             }
