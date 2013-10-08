@@ -289,19 +289,25 @@ init = function() {
 
 
         newTest("Statistics: ticket with common dependence should not influence the statistics");
-        stage14a_ticket2 = kernel.require( dir + "/test05a/test05a_start2.js", stage14a_2 );
+        stage14a_ticket2 = kernel.require(
+            [
+                dir + "/test05a/test05a_start2.js",
+                dir + "/test05a/test05a_start2a.js"
+            ],
+            stage14a_2
+        );
     }
     var stage14a_2 = function() {
         var readynr1 = kernel.getStats( stage14a_ticket1 )[ kernel.states.ready ];
         check(readynr1 == 3);
         var readynr2 = kernel.getStats( stage14a_ticket2 )[ kernel.states.ready ];
-        check(readynr2 == 2);
+        check(readynr2 == 3);
         kernel.release( stage14a_ticket1 );
         setTimeout( stage14a_3, 300 );
     }
     var stage14a_3 = function() {
         var readynr = kernel.getStats( stage14a_ticket2 )[ kernel.states.ready ];
-        check(readynr == 2);
+        check(readynr == 3);
         
         
         
