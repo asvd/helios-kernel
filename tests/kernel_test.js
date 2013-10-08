@@ -50,17 +50,44 @@ init = function() {
 
         newTest("Dynamically loading a module with a dependence");
         stage01ticket = kernel.require(
+            dir + "/test01/test01.js", stage01_1
+        );
+    }
+    var stage01_1 = function() {
+        check( test01_1 );
+        check( test01_2 );
+
+
+
+        newTest("Requesting a module again right after it was released");
+        kernel.release(stage01ticket);
+        stage01_1ticket = kernel.require(
+            dir + "/test01/test01.js", stage01_2
+        );
+    }
+    var stage01_2 = function() {
+        check( test01_1 );
+        check( test01_2 );
+
+
+
+        newTest("Requesting a module shortly after it was released");
+        kernel.release(stage01_1ticket);
+        setTimeout(stage01_3,10);
+    }
+    var stage01_3 = function() {
+        stage01_3ticket = kernel.require(
             dir + "/test01/test01.js", stage02
         );
     }
     var stage02 = function() {
         check( test01_1 );
         check( test01_2 );
-
+        
 
 
         newTest("Releasing ticket with dependence");
-        kernel.release( stage01ticket );
+        kernel.release( stage01_3ticket );
         setTimeout(stage3, 100);
     }
     var stage3 = function() {
@@ -244,12 +271,37 @@ init = function() {
 
         newTest( "Statistics: restoring initial nmuber of ready modules after ticket release" );
         kernel.release( stage10_6ticket );
-        setTimeout( stage14, 3000 );
+        setTimeout( stage14a, 3000 );
     }
-    var stage14 = function() {
+    var stage14a = function() {
         var newReadyNr = kernel.getStats()[ kernel.states.ready ];
         check( newReadyNr == tests.readyNr );
-        
+
+
+
+        newTest("Statistics: checking statistics for a single ticket");
+        stage14a_ticket1 = kernel.require( dir + "/test05a/test05a_start1.js", stage14a_1 );
+    }
+    var stage14a_1 = function() {
+        var readynr = kernel.getStats( stage14a_ticket1 )[ kernel.states.ready ];
+        check(readynr == 3);
+
+
+
+        newTest("Statistics: ticket with common dependence should not influence the statistics");
+        stage14a_ticket2 = kernel.require( dir + "/test05a/test05a_start2.js", stage14a_2 );
+    }
+    var stage14a_2 = function() {
+        var readynr1 = kernel.getStats( stage14a_ticket1 )[ kernel.states.ready ];
+        check(readynr1 == 3);
+        var readynr2 = kernel.getStats( stage14a_ticket2 )[ kernel.states.ready ];
+        check(readynr2 == 2);
+        kernel.release( stage14a_ticket1 );
+        setTimeout( stage14a_3, 300 );
+    }
+    var stage14a_3 = function() {
+        var readynr = kernel.getStats( stage14a_ticket2 )[ kernel.states.ready ];
+        check(readynr == 2);
         
         
         
@@ -495,10 +547,43 @@ init = function() {
 
         newTest("Error simulation: releasing already released ticket");
         kernel.release( stage25ticket );
-        setTimeout( stage28, 300 );
+        setTimeout( stage27a_1, 300 );
+    }
+    var stage27a_1 = function() {
+
+
+
+        newTest("Error simulation: loading module without includes and initializer");
+        stage27a_1ticket = kernel.require(
+            dir + "/test16/empty.js",
+            stage27a_1_fail,
+            stage27a_1_success
+        );
+    }
+    var stage27a_1_fail = function() {
+        check( false );
+        stage27a_2();
+    }
+    var stage27a_1_success = function() {
+        check( true );
+        stage27a_2();
+    }
+    var stage27a_2 = function() {
+        kernel.release( stage27a_1ticket );
+
+
+
+        newTest("Loading module with dependences but without initializer");
+        test16_dep_init = false;
+        stage27a_2ticket = kernel.require(
+            dir + "/test16/test16.js",
+            stage28
+        );
     }
     var stage28 = function() {
-
+        check( test16_dep_init );
+        kernel.release(stage27a_2ticket);
+        
 
 
         // IE7 crashes on circular dependence
