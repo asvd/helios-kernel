@@ -308,6 +308,7 @@ init = function() {
     var stage14a_3 = function() {
         var readynr = kernel.getStats( stage14a_ticket2 )[ kernel.states.ready ];
         check(readynr == 3);
+        kernel.release( stage14a_ticket2 );
         
         
         
