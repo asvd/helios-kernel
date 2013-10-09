@@ -4,7 +4,7 @@ Helios Kernel
 
 Helios Kernel is an open-source cross-platform javascript module
 loader and dependence manager. It works both in browser-based
-environment and in nodejs(http://nodejs.org/) . Helios Kernel tracks
+environment and in [nodejs](http://nodejs.org/). Helios Kernel tracks
 modules dependence graph and can (un)load the corresponding modules
 dynamically in the runtime according to the needs of different
 independent parts of a project. It is smart enough to start
