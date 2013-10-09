@@ -15,7 +15,7 @@ problem, but still keeping the application alive). But the key feature
 of the Helios Kernel is
 
 
-## Simplicity
+### Simplicity
 
 Typical module has the following structure:
 
