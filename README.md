@@ -121,14 +121,14 @@ alternative to the CommonJS specifications.
 2. Put your code to main.js inside the `init()` function, this is the
 starting point.
 
-3a. To launch the application from nodejs, load nodestart.js:
+3. To launch the application from nodejs, load nodestart.js:
 
 ```bash
 $ nodejs nodestart.js
 ```
 
-3b. To launch the application from a browser environment, open
-webstart.html in a browser
+To launch the application from a browser environment, open
+`webstart.html` in a browser
 
 4. To declare module dependences, use `include()` function at the module
 head (above the `init()` function declaration)
