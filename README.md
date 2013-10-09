@@ -195,8 +195,8 @@ init = function() {
 ### Dynamical module loading
 
 To load a module in the runtime, use `kernel.require()` function. It
-takes three arguments - absolute path of the module, and two callbacks
-- for a success and for a failure.
+takes three arguments - absolute path of the module, and two callbacks -
+for a success and for a failure.
 
 Unlike `include()` which is used for declaring a dependence in a
 module head, and is mostly intended to work with relative paths,
