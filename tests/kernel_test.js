@@ -257,14 +257,14 @@ init = function() {
 
 
         newTest( "Statistics: counting number of ready modules after require()" );
-        tests.readyNr = kernel.getStats()[ kernel.states.ready ];
+        tests.readyNr = kernel.getStats().ready;
         stage10_6ticket = kernel.require( dir + "/test05/test05.js", stage11 );
     }
     var stage11 = function() {
         setTimeout( stage12, 300 );
     }
     var stage12 = function() {
-        var newReadyNr = kernel.getStats()[ kernel.states.ready ];
+        var newReadyNr = kernel.getStats().ready;
         check( (newReadyNr - tests.readyNr) == 4 );
 
 
@@ -274,7 +274,7 @@ init = function() {
         setTimeout( stage14a, 3000 );
     }
     var stage14a = function() {
-        var newReadyNr = kernel.getStats()[ kernel.states.ready ];
+        var newReadyNr = kernel.getStats().ready;
         check( newReadyNr == tests.readyNr );
 
 
@@ -283,7 +283,7 @@ init = function() {
         stage14a_ticket1 = kernel.require( dir + "/test05a/test05a_start1.js", stage14a_1 );
     }
     var stage14a_1 = function() {
-        var readynr = kernel.getStats( stage14a_ticket1 )[ kernel.states.ready ];
+        var readynr = kernel.getStats( stage14a_ticket1 ).ready;
         check(readynr == 3);
 
 
@@ -298,15 +298,15 @@ init = function() {
         );
     }
     var stage14a_2 = function() {
-        var readynr1 = kernel.getStats( stage14a_ticket1 )[ kernel.states.ready ];
+        var readynr1 = kernel.getStats( stage14a_ticket1 ).ready;
         check(readynr1 == 3);
-        var readynr2 = kernel.getStats( stage14a_ticket2 )[ kernel.states.ready ];
+        var readynr2 = kernel.getStats( stage14a_ticket2 ).ready;
         check(readynr2 == 3);
         kernel.release( stage14a_ticket1 );
         setTimeout( stage14a_3, 300 );
     }
     var stage14a_3 = function() {
-        var readynr = kernel.getStats( stage14a_ticket2 )[ kernel.states.ready ];
+        var readynr = kernel.getStats( stage14a_ticket2 ).ready;
         check(readynr == 3);
         kernel.release( stage14a_ticket2 );
         

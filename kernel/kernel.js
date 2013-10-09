@@ -63,7 +63,7 @@ if (typeof kernel == 'undefined') {
 init = null;
 uninit = null;
 
-kernel.states = {
+kernel._states = {
     created        : 0,  // initial state, not yet loaded
     loading        : 1,  // being loaded at the moment
     waiting        : 2,  // loaded; waits for the parents to initialize
@@ -152,7 +152,16 @@ kernel.release = function( ticket ) {
  * @returns {Array} statistics array
  */
 kernel.getStats = function( ticket ) {
-    return ticket ? ticket._getStats() : kernel._stats
+    var nativeStats = ticket ? ticket._getStats() : kernel._stats
+    var total = 0;
+    for ( var i in kernel._states ) {
+        total += nativeStats[ kernel._states[i] ];
+    }
+
+    return {
+        total : total,
+        ready : nativeStats[ kernel._states.ready ]
+    };
 }
 
 
@@ -165,13 +174,13 @@ kernel.getStats = function( ticket ) {
  * @param {String} path path of the newly created module
  *
  * @property path absolute path to the module source
- * @property state state of the module, one of kernel.states
+ * @property state state of the module, one of kernel._states
  * @property children[] keeps the modules which included this module
  * @property parents[] keeps the modules included by this module
  */
 kernel._Module = function( path ) {
     this.path = path;
-    this.state = kernel.states.created;
+    this.state = kernel._states.created;
     this.children = [];
     this.parents  = [];
     this._sCallbacks = [];
@@ -190,18 +199,18 @@ kernel._Module = function( path ) {
  * calling the platform-dependent script loading function
  */
 kernel._Module.prototype.load = function() {
-    this.setState( kernel.states.loading );
+    this.setState( kernel._states.loading );
 
     var me = this;
     var sCb = function() {
-        if ( me.state == kernel.states.loading ) {
+        if ( me.state == kernel._states.loading ) {
             me.finalizeLoading();
         }  // otherwise module could already be invalidated
            // because of the discovered circular dependence
     }
     
     var fCb = function() {
-        if ( me.state == kernel.states.loading ) {
+        if ( me.state == kernel._states.loading ) {
             // loading failure
             me.invalidate();
         }  // otherwise module could already be invalidated
@@ -263,7 +272,7 @@ kernel._Module.prototype.finalizeLoading = function() {
         } else if ( this.areParentsReady() ) {
             this.initialize();
         } else {
-            this.setState( kernel.states.waiting );
+            this.setState( kernel._states.waiting );
         }
 
         kernel._loadNext();
@@ -277,7 +286,7 @@ kernel._Module.prototype.finalizeLoading = function() {
  * initialization, notifies children and decides what to do next
  */
 kernel._Module.prototype.initialize = function() {
-    this.setState( kernel.states.initializing );
+    this.setState( kernel._states.initializing );
 
     // gives time for statistics meters to update
     kernel._platform.thread(
@@ -299,14 +308,14 @@ kernel._Module.prototype.initialize = function() {
                 if ( !this.isNeeded() ) {
                     this.uninitialize();
                 } else {
-                    this.setState( kernel.states.ready );
+                    this.setState( kernel._states.ready );
                     while ( this._sCallbacks.length>0 ) {
                         ( this._sCallbacks.shift() )();
                     }
 
                     // initializing children
                     for ( var i = 0; i < this.children.length; i++ ) {
-                        if ( this.children[i].state == kernel.states.waiting &&
+                        if ( this.children[i].state == kernel._states.waiting &&
                              this.children[i].areParentsReady() ) {
                             this.children[i].initialize();
                         }
@@ -332,7 +341,7 @@ kernel._Module.prototype.initialize = function() {
  * reasonable
  */
 kernel._Module.prototype.uninitialize = function() {
-    this.setState( kernel.states.uninitializing );
+    this.setState( kernel._states.uninitializing );
 
     // gives time for statistics meters to update
     kernel._platform.thread(
@@ -433,10 +442,10 @@ kernel._Module.prototype.removeChild = function( child ) {
     }
 
     if ( !this.isNeeded() ) {
-        if ( this.state == kernel.states.waiting ) {
+        if ( this.state == kernel._states.waiting ) {
             // thread prevents call stack growth
             kernel._platform.thread( this.destroy, this );
-        } else if ( this.state == kernel.states.ready ) {
+        } else if ( this.state == kernel._states.ready ) {
             this.uninitialize();
         }
     }
@@ -552,7 +561,7 @@ kernel._Module.prototype.isNeeded = function() {
  */
 kernel._Module.prototype.areParentsReady = function() {
     for ( var i = 0; i < this.parents.length; i++ ) {
-        if ( this.parents[i].state != kernel.states.ready ) {
+        if ( this.parents[i].state != kernel._states.ready ) {
             return false;
         }
     }
@@ -573,7 +582,7 @@ kernel._Module.prototype.areParentsReady = function() {
 kernel._Module.prototype.require = function( ticket, sCb, fCb ) {
     this._tickets.push(ticket);
 
-    if ( this.state == kernel.states.ready ) {
+    if ( this.state == kernel._states.ready ) {
         if (sCb) {
             // broken callbacks should not break the call stack
             kernel._platform.thread(sCb);
@@ -606,9 +615,9 @@ kernel._Module.prototype.release = function( ticket ) {
     }
 
     if ( !this.isNeeded() ) {
-        if ( this.state == kernel.states.waiting ) {
+        if ( this.state == kernel._states.waiting ) {
             this.destroy();
-        } else if ( this.state == kernel.states.ready ) {
+        } else if ( this.state == kernel._states.ready ) {
             this.uninitialize();
         }
     }
@@ -696,8 +705,8 @@ kernel._Ticket.prototype._release = function() {
 kernel._Ticket.prototype._getStats = function() {
     if (!this._stats) {
         this._stats = [];
-        for ( var i in kernel.states ) {
-            this._stats[ kernel.states[i] ] = 0;
+        for ( var i in kernel._states ) {
+            this._stats[ kernel._states[i] ] = 0;
         }
 
         for ( i = 0; i < this._modules.length; i++ ) {
@@ -714,8 +723,8 @@ kernel._modules = [];        // list of all known modules
 kernel._activeModule = null; // currently loading module
 kernel._loadQueue = [];      // list of modules to be loaded
 kernel._stats = [];          // numbers of modules for each state
-for ( var i in kernel.states ) {
-    kernel._stats[ kernel.states[i] ] = 0;
+for ( var i in kernel._states ) {
+    kernel._stats[ kernel._states[i] ] = 0;
 }
 
 

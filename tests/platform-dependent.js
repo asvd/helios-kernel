@@ -51,20 +51,6 @@ init = function() {
 
         body.appendChild(stats);
 
-        var oldStats = "";
-        var updateStats = function() {
-            var result = "";
-            for ( var i in kernel.moduleStates ) {
-                result += "" + i + ": " +kernel.getStatistics()[ kernel.moduleStates[ i ] ]+ "<br/>";
-            }
-            if ( oldStats != result )  {
-                stats.innerHTML = oldStats = result;
-            }
-            setTimeout( updateStats, delay );
-        }
-        updateStats();
-
-
         // SINGLE MODULE PERSONAL STATISTICS
         style = {
             backgroundColor : "#000000",
@@ -91,9 +77,8 @@ init = function() {
             var result = "";
 
             var modStats = kernel.getStats(ticket);
-            for ( var i in kernel.states ) {
-                result += "" + i + ": " +modStats[ kernel.states[i] ]+ "<br/>";
-            }
+            result += "ready: " +modStats.ready + "<br/>";
+            result += "total: " +modStats.total + "<br/>";
 
             if ( oldPerStats != result )  {
                 perstats.innerHTML = oldPerStats = result;
