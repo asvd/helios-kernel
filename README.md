@@ -123,9 +123,7 @@ starting point.
 
 3. To launch the application from nodejs, load nodestart.js:
 
-```bash
-$ nodejs nodestart.js
-```
+`$ nodejs nodestart.js`
 
 To launch the application from a browser environment, open
 `webstart.html` in a browser
