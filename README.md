@@ -71,7 +71,7 @@ exist, one of which is Helios Kernel.
 
 In nodejs there is a native dependence declaration technique - the
 `require()` function which implements the specifications suggested by
-CommonJS(http://en.wikipedia.org/wiki/CommonJS) group.
+[CommonJS](http://en.wikipedia.org/wiki/CommonJS) group.
 
 Helios Kernel API pretends to be a simplier and more flexible
 alternative to the CommonJS specifications.
