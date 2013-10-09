@@ -54,7 +54,7 @@ implementatios of
 which are popular nowadays, but seem to be a bit overdesigned.
 
 
-## How can Kernel be useful for browser-based applications
+### How can Kernel be useful for browser-based applications
 
 In the browser environments there is no native dependence management
 solution. To ensure that a set of javascript-libraries is loaded, the
@@ -67,7 +67,7 @@ To solve this problem, several script loading approaches and libraries
 exist, one of which is Helios Kernel.
 
 
-## How can Kernel be useful for nodejs applications
+### How can Kernel be useful for nodejs applications
 
 In nodejs there is a native dependence declaration technique - the
 `require()` function which implements the specifications suggested by
@@ -76,7 +76,7 @@ In nodejs there is a native dependence declaration technique - the
 Helios Kernel API pretends to be a simplier and more flexible
 alternative to the CommonJS specifications.
 
-### What is simplier:
+#### What is simplier:
 
 - It is easier to find out where the particular dependence source code
   is located (dependences are always declared by exact path)
@@ -99,7 +99,7 @@ alternative to the CommonJS specifications.
   declaring the needed parts of the library)
 
 
-### What is more flexible:
+#### What is more flexible:
 
 - It is possible to unload the code which is not needed anymore
 
@@ -114,7 +114,7 @@ alternative to the CommonJS specifications.
 
 
 
-## How to setup a new project based on the Helios Kernel
+### How to setup a new project based on the Helios Kernel
 
 1. Download the distribution [here](http://localhost) and unpack it somwhere
 
@@ -136,7 +136,7 @@ head (above the `init()` function declaration)
 
 
 
-## How to use Helios Kernel compatible modules with existing project
+### How to use Helios Kernel compatible modules with existing project
 
 1. Download the Helios Kernel distribution [here](http://localhost) and
 unpack it somwhere
@@ -153,7 +153,7 @@ function of Helios Kernel to load any Helios-compatible library.
 
 
 
-## How to create a Helios Kernel module
+### How to create a Helios Kernel module
 
 A module code should be located inside the `init()` function body which
 is declared globally for each module. Above that function, a set of
@@ -192,7 +192,7 @@ init = function() {
 
 
 
-## Dynamical module loading
+### Dynamical module loading
 
 To load a module in the runtime, use `kernel.require()` function. It
 takes three arguments - absolute path of the module, and two callbacks
@@ -255,7 +255,7 @@ be released everywhere else.
 
 
 
-## Module uninitializer
+### Module uninitializer
 
 Upon the module unload, its code is removed from the Kernel module
 cache. But the Kernel does not track the objects created by the
@@ -293,7 +293,7 @@ collector should (hopely) do the rest.
 
 
 
-## How to convert existing javascript library to Helios Kernel module
+### How to convert existing javascript library to Helios Kernel module
 
 If you have a library of any format, it usually defines a set of
 routines which should be later used from outside. In most of the
