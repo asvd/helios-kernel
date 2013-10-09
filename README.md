@@ -139,9 +139,9 @@ unpack it somwhere
 2. Load the Helios Kernel code which is located in `kernel/kernel.js`
 of the distribution using any technique suitable for your
 project/environment. For a browser-based environment you could add a
-`<script>` tag to the head of HTML-document (see webstart.html for an
-example). For nodejs you could use node's `require()` function to load
-kernel.js (see nodestart.js for an example).
+`<script>` tag to the head of HTML-document (see `webstart.html` for
+an example). For nodejs you could use node's `require()` function to
+load `kernel.js` (see `nodestart.js` for an example).
 
 3. After the `kernel.js` is loaded, you may use `kernel.require()`
 function of Helios Kernel to load any Helios-compatible library.
@@ -197,7 +197,7 @@ Unlike `include()` which is used for declaring a dependence in a
 module head, and is mostly intended to work with relative paths,
 `kernel.require()` only accepts specifying the absolute path. For a
 web environment you may start it with the slash `/` which will stand
-for the domain root. To load a romete module, provide the full URL
+for the domain root. To load a remote module, provide the full URL
 starting with a protocol (`http://...`). You may also provide an array
 of paths to load several modules at once.
 
@@ -252,11 +252,11 @@ be released everywhere else.
 
 ### Module uninitializer
 
-Upon the module unload, its code is removed from the Kernel module
-cache. But the Kernel does not track the objects created by the
-module's initializer, therefore you may provide an uninitializer
-function which should remove the library objects. This function will
-be called during the module unload.
+Upon the module unload, its code is removed from the Kernel cache. But
+the Kernel does not track the objects created by the module's
+initializer, therefore you may provide an uninitializer function which
+should remove the library objects. This function will be called during
+the module unload.
 
 Therefore the full version of a library module will look like this:
 
