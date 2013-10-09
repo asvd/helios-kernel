@@ -39,7 +39,7 @@ module as soon as all dependences included at the module head are
 loaded.
 
 The only argument of the `include()` function is the exact relative path
-to the module which should be loaded beforehand - so that it is always
+to the module which should be loaded beforehand — so that it is always
 easy to find out the particular dependence source locaiton.
 
 Inside the `init()` function of a module, a set of global objects are to
@@ -69,7 +69,7 @@ exist, one of which is Helios Kernel.
 
 ### How can Kernel be useful for nodejs applications
 
-In nodejs there is a native dependence declaration technique - the
+In nodejs there is a native dependence declaration technique — the
 `require()` function which implements the specifications suggested by
 [CommonJS](http://en.wikipedia.org/wiki/CommonJS) group.
 
@@ -94,7 +94,7 @@ alternative to the CommonJS specifications.
 - It is easier keep a library code split between the different modules
   (the routines declared by the library code do not need to be
   'passed' through the exported objects, they are declared as the
-  global objects instead - this simplifies the creation of 'compound'
+  global objects instead — this simplifies the creation of 'compound'
   library module which will simply `include()` all other modules each
   declaring the needed parts of the library)
 
@@ -104,7 +104,7 @@ alternative to the CommonJS specifications.
 - It is possible to unload the code which is not needed anymore
 
 - Any javascript library could be easily converted to the Helios
-  Kernel module - in most cases its code should simply be wrapped with
+  Kernel module — in most cases its code should simply be wrapped with
   an `init()` function declaration
 
 - Helios Kernel modules format is cross-compatible between browser and
@@ -195,7 +195,7 @@ init = function() {
 ### Dynamical module loading
 
 To load a module in the runtime, use `kernel.require()` function. It
-takes three arguments - absolute path of the module, and two callbacks ---
+takes three arguments — absolute path of the module, and two callbacks —
 for a success and for a failure.
 
 Unlike `include()` which is used for declaring a dependence in a
