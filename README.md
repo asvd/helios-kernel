@@ -287,10 +287,10 @@ uninit = function() {
 }
 ```
 
-If the module initializer declares a single compound object containing
-all the library routines inside (the recommended way, myLibrary in the
-example above), simply clearing that object should be enough, garbage
-collector should (hopely) do the rest.
+If a module initializer declares a single compound object containing
+all the library routines inside (the recommended way, `myLibrary` in
+the example above), simply clearing that object should be enough,
+garbage collector should (hopely) do the rest.
 
 
 
@@ -300,7 +300,7 @@ If you have a library of any format, it usually defines a set of
 routines which should be later used from outside. In most of the
 web-libraries which are intednded to be included using the `<script>`
 tag, a set of global objects are simply defined. In this case it
-should be enough to wrap the library code with an `init()` function
+should be enough to wrap the library code with the `init()` function
 declaration. So if the original source was like this:
 
 ```js
@@ -335,9 +335,9 @@ before the `init()` function code of the module which requested the
 library.
 
 For the libraries using some kind of export object, the whole code
-should also be wrapped with an `init()` function, and the export object
-should be declared globally. For instance, a nodejs module usually
-looks like this:
+should also be wrapped with the `init()` function, and the export
+object should be declared globally. For instance, a nodejs module
+usually looks like this:
 
 ```js
 this.someObject = {
