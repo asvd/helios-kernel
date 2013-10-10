@@ -6,52 +6,52 @@ Helios Kernel is an open-source cross-platform javascript module
 loader and dependence manager. It works both in browser-based
 environment and in [nodejs](http://nodejs.org/). Helios Kernel tracks
 modules dependence graph and can (un)load the corresponding modules
-dynamically in the runtime according to the needs of different
+dynamically in the runtime according to the needs of different and
 independent parts of a project. It is smart enough to start
 initializing the modules which are ready for that, while others are
-still being downloaded or parsed, and to process different tricky
-situations such as circular dependences or broken code (reporting the
-problem, but still keeping the application alive). But the key feature
-of the Helios Kernel is
+ still being downloaded or parsed, and to process some tricky
+ situations such as circular dependences or broken code (reporting the
+ problem, but still keeping the application alive). But the key feature
+ of the Helios Kernel is
 
 
-### Simplicity
+ ### Simplicity
 
-Typical module has the following structure:
+ Typical module has the following structure:
 
-```js
-// dependences
-include("path/to/library1.js");
-include("../path/to/another/library2.js");
+ ```js
+ // dependences
+ include("path/to/library1.js");
+ include("../path/to/another/library2.js");
 
-init = function() {
-    // module body code which relies on the dependences
-    ...
-    ...
-    ...
-}
-```
+ init = function() {
+     // module body code which relies on the dependences
+     ...
+     ...
+     ...
+ }
+ ```
 
-A set of `include()` expressions at the top is similar to including an
-external source in many other programming languages/environments.
-Helios Kernel will issue the code within the `init()` function of a
-module as soon as all dependences included at the module head are
-loaded.
+ A set of `include()` expressions at the top is similar to including an
+ external source in many other programming languages/environments.
+ Helios Kernel will issue the code within the `init()` function of a
+ module as soon as all dependences included at the module head are
+ loaded.
 
-The only argument of the `include()` function is the exact relative path
-to the module which should be loaded beforehand — so that it is always
-easy to find out the particular dependence source locaiton.
+ The only argument of the `include()` function is the exact relative path
+ to the module which should be loaded beforehand — so that it is always
+ easy to find out the particular dependence source locaiton.
 
-Inside the `init()` function of a module, a set of global objects are to
-be declared, which will be visible by the dependent modules, and will
-thus make up the module interface.
+ Inside the `init()` function of a module, a set of global objects are to
+ be declared, which will be visible by the dependent modules, and will
+ thus make up the module interface.
 
-This is basicly everything you need to know to use the Helios Kernel
-for setting-up the dependencies in your project. Simplicity of Helios
+This is basicly everything you need to know to use Helios Kernel for
+setting-up the dependencies in your project. Simplicity of Helios
 Kernel is intended to provide an alternative to different
-implementatios of
-[AMD API](https://github.com/amdjs/amdjs-api/wiki/AMD) for instance,
-which are popular nowadays, but seem to be a bit overdesigned.
+implementatios of [AMD
+API](https://github.com/amdjs/amdjs-api/wiki/AMD) for instance, which
+are popular nowadays, but seem to be a bit overdesigned.
 
 
 ### How can Kernel be useful for browser-based applications
@@ -78,6 +78,11 @@ alternative to the CommonJS specifications.
 
 #### What is simplier:
 
+- Object export is performed through the global scope, which
+  simplifies the module format and documentation (no need to use a
+  special export object, library objects are always referred with the
+  same name)
+
 - It is easier to find out where the particular dependence source code
   is located (dependences are always declared by exact path)
 
@@ -88,8 +93,8 @@ alternative to the CommonJS specifications.
   code (dynamically loading additional modules is a different use-case
   which is performed by the `kernel.require()` function)
 
-- Cycle dependences considered as an error (this prevents dependence
-  mess-up and helps to keep everything in order)
+- Circular dependences considered as an error (which prevents
+  dependence mess-up and helps to keep everything in order)
 
 - It is easier keep a library code split between the different modules
   (the routines declared by the library code do not need to be
@@ -137,14 +142,15 @@ head (above the `init()` function declaration)
 unpack it somwhere
 
 2. Load the Helios Kernel code which is located in `kernel/kernel.js`
-of the distribution using any technique suitable for your
+in the distribution using any technique suitable for your
 project/environment. For a browser-based environment you could add a
 `<script>` tag to the head of HTML-document (see `webstart.html` for
 an example). For nodejs you could use node's `require()` function to
 load `kernel.js` (see `nodestart.js` for an example).
 
 3. After the `kernel.js` is loaded, you may use `kernel.require()`
-function of Helios Kernel to load any Helios-compatible library.
+function provided by Helios Kernel to load any Kernel-compatible
+library.
 
 
 
@@ -157,7 +163,7 @@ function, global objects should be declared. These are the objects
 provided by the module to other modules which include this module as a
 dependence.
 
-For instance, you could have a module library.js providing a library
+For instance, you could have a module `library.js` providing a library
 function to any module which will include it:
 
 ```js
