@@ -131,7 +131,7 @@ head (above the `init()` function declaration)
 
 
 
-### How to use Helios Kernel compatible modules with existing project
+### How to use Kernel-compatible modules with existing project
 
 1. Download the Helios Kernel distribution [here](http://localhost) and
 unpack it somwhere
@@ -288,7 +288,7 @@ collector should (hopely) do the rest.
 
 
 
-### How to convert existing javascript library to Helios Kernel module
+### How to convert existing javascript library to Kernel module
 
 If you have a library of any format, it usually defines a set of
 routines which should be later used from outside. In most of the
