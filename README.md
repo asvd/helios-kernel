@@ -15,36 +15,36 @@ initializing the modules which are ready for that, while others are
  of the Helios Kernel is
 
 
- ### Simplicity
+### Simplicity
 
- Typical module has the following structure:
+Typical module has the following structure:
 
- ```js
- // dependences
- include("path/to/library1.js");
- include("../path/to/another/library2.js");
+```js
+// dependences
+include("path/to/library1.js");
+include("../path/to/another/library2.js");
 
- init = function() {
-     // module body code which relies on the dependences
-     ...
-     ...
-     ...
- }
- ```
+init = function() {
+    // module body code which relies on the dependences
+    ...
+    ...
+    ...
+}
+```
 
- A set of `include()` expressions at the top is similar to including an
- external source in many other programming languages/environments.
- Helios Kernel will issue the code within the `init()` function of a
- module as soon as all dependences included at the module head are
- loaded.
+A set of `include()` expressions at the top is similar to including an
+external source in many other programming languages/environments.
+Helios Kernel will issue the code within the `init()` function of a
+module as soon as all dependences included at the module head are
+loaded.
 
- The only argument of the `include()` function is the exact relative path
- to the module which should be loaded beforehand — so that it is always
- easy to find out the particular dependence source locaiton.
+The only argument of the `include()` function is the exact relative path
+to the module which should be loaded beforehand — so that it is always
+easy to find out the particular dependence source locaiton.
 
- Inside the `init()` function of a module, a set of global objects are to
- be declared, which will be visible by the dependent modules, and will
- thus make up the module interface.
+Inside the `init()` function of a module, a set of global objects are to
+be declared, which will be visible by the dependent modules, and will
+thus make up the module interface.
 
 This is basicly everything you need to know to use Helios Kernel for
 setting-up the dependencies in your project. Simplicity of Helios
