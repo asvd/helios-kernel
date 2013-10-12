@@ -796,7 +796,7 @@ kernel._getOrCreateModule = function( path ) {
 kernel._loadNext = function() {
     init = uninit = null;
 
-    // searching the most demanded module
+    // searching for the most demanded module
     if ( kernel._loadQueue.length > 0 ) {
         var maxModule = kernel._loadQueue[0];
         var maxChildren = maxModule.children.length;
