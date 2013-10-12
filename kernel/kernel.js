@@ -795,9 +795,28 @@ kernel._getOrCreateModule = function( path ) {
  */
 kernel._loadNext = function() {
     init = uninit = null;
-    kernel._activeModule = kernel._loadQueue.pop() || null;
-    if ( kernel._activeModule ) {
+
+    // searching the most demanded module
+    if ( kernel._loadQueue.length > 0 ) {
+        var maxModule = kernel._loadQueue[0];
+        var maxChildren = maxModule.children.length;
+        var maxIdx = 0;
+        var current = null;
+
+        for ( var i = 1; i < kernel._loadQueue.length; i++ ) {
+            current = kernel._loadQueue[i];
+            if ( current.children.length > maxChildren ) {
+                maxChildren = current.children.length;
+                maxModule = current;
+                maxIdx = i;
+            }
+        }
+
+        kernel._loadQueue.splice(maxIdx,1);
+        kernel._activeModule = maxModule;
         kernel._activeModule.load();
+    } else {
+        kernel._activeModule = null;
     }
 }
 
