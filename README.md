@@ -78,30 +78,29 @@ alternative to the CommonJS specifications.
 
 #### What is simplier:
 
-- Object export is performed through the global scope, which
-  simplifies the module format and documentation (no need to use a
-  special export object, library objects are always referred with the
-  same name)
-
-- It is easier to find out where the particular dependence source code
-  is located (dependences are always declared by exact path)
-
-- A list of dependences is located in a single place (they are all
-  listed in the module head)
+- It is easier to see and declare module's dependences (they are
+  always listed in the module head, not inside its body, not in some
+  external config)
 
 - There could be no 'hidden' dependences declared in the middle of a
   code (dynamically loading additional modules is a different use-case
   which is performed by the `kernel.require()` function)
 
+- It is easier to find out where the particular dependence source code
+  is located (dependences are always declared by exact path)
+
+- Module structure, documentation and usage are simplier (there is no
+  need to declare a special export object and reuse it in the
+  dependent modules, instead library objects are exported using the
+  global scope, and they are always referred with the same name)
+
 - Circular dependences considered as an error (which prevents
   dependence mess-up and helps to keep everything in order)
 
-- It is easier keep a library code split between the different modules
-  (the routines declared by the library code do not need to be
-  'passed' through the exported objects, they are declared as the
-  global objects instead — this simplifies the creation of 'compound'
-  library module which will simply `include()` all other modules each
-  declaring the needed parts of the library)
+- It is easier to split the library objects between the different
+  modules (since there is no export object, it is easier to create a
+  compound library module which will simply include all library
+  modules each making up some part of the library)
 
 
 #### What is more flexible:
