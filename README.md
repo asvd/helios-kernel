@@ -21,8 +21,8 @@ Typical module has the following structure:
 
 ```js
 // dependences
-include("path/to/library1.js");
-include("../path/to/another/library2.js");
+include("path/to/module1.js");
+include("../path/to/another/module2.js");
 
 init = function() {
     // module code which relies on the dependences
