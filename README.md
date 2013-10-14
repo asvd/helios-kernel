@@ -9,10 +9,10 @@ modules dependence graph and can (un)load the corresponding modules
 dynamically in the runtime according to the needs of different and
 independent parts of a project. It is smart enough to start
 initializing the modules which are ready for that, while others are
- still being downloaded or parsed, and to process some tricky
- situations such as circular dependences or broken code (reporting the
- problem, but still keeping the application alive). But the key feature
- of the Helios Kernel is
+still being downloaded or parsed, and to handle some tricky problems
+such as circular dependences or broken code (reporting the problem,
+but still keeping the application alive). But the key feature of the
+Helios Kernel is
 
 
 ### Simplicity
