@@ -5,7 +5,7 @@ Helios Kernel
 Helios Kernel is an open-source cross-platform javascript module
 loader and dependence manager. It works both in browser-based
 environment and in [nodejs](http://nodejs.org/). Helios Kernel tracks
-modules dependence graph and can (un)load the corresponding modules
+modules dependence graph and can load and unload corresponding modules
 dynamically in the runtime according to the needs of different and
 independent parts of a project. It is smart enough to start
 initializing the modules which are ready for that, while others are
@@ -52,6 +52,8 @@ Kernel is intended to provide an alternative to different
 implementatios of [AMD
 API](https://github.com/amdjs/amdjs-api/wiki/AMD) for instance, which
 are popular nowadays, but seem to be a bit overdesigned.
+
+This page contains the full documentation on the Helios Kernel.
 
 
 ### How can Kernel be useful for browser-based applications
