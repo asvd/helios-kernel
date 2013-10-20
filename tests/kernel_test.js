@@ -259,17 +259,19 @@ init = function() {
         newTest( "Statistics: counting number of ready modules after require()" );
         tests.readyNr = kernel.getStats().ready;
         stage10_6ticket = kernel.require( dir + "/test05/test05.js", stage11 );
+        check( kernel.getStats().pending );
     }
     var stage11 = function() {
         setTimeout( stage12, 300 );
     }
     var stage12 = function() {
+        check( !kernel.getStats().pending );
         var newReadyNr = kernel.getStats().ready;
         check( (newReadyNr - tests.readyNr) == 4 );
 
 
 
-        newTest( "Statistics: restoring initial nmuber of ready modules after ticket release" );
+        newTest( "Statistics: restoring initial number of ready modules after ticket release" );
         kernel.release( stage10_6ticket );
         setTimeout( stage14a, 3000 );
     }

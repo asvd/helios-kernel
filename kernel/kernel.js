@@ -153,14 +153,20 @@ kernel.release = function( ticket ) {
  */
 kernel.getStats = function( ticket ) {
     var nativeStats = ticket ? ticket._getStats() : kernel._stats
+
     var total = 0;
     for ( var i in kernel._states ) {
         total += nativeStats[ kernel._states[i] ];
     }
 
+    // modules which are created or loading may reveal new dependences
+    var pending = nativeStats[ kernel._states.created ] ||
+                  nativeStats[ kernel._states.loading ];
+
     return {
         total : total,
-        ready : nativeStats[ kernel._states.ready ]
+        ready : nativeStats[ kernel._states.ready ],
+        pending : pending
     };
 }
 
