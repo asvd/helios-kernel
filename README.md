@@ -137,7 +137,7 @@ head (above the `init()` function declaration)
 
 
 
-### How to use Kernel-compatible modules with existing project
+### How to use Kernel-compatible modules with an existing project
 
 1. Download the Helios Kernel distribution [here](http://localhost) and
 unpack it somwhere
@@ -280,7 +280,7 @@ init = function() {
 }
 
 
-// module initializer
+// module uninitializer
 uninit = function() {
     // removing objects created in initializer
     myLibrary = null;
