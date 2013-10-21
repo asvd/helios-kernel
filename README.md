@@ -124,8 +124,8 @@ alternative to the CommonJS specifications.
 
 1. Download the distribution [here](http://localhost) and unpack it somwhere
 
-2. Put your code to main.js inside the `init()` function, this is the
-starting point.
+2. Put your code to `main.js` inside the `init()` function, this is
+the starting point.
 
 3. To launch the application from nodejs, load nodestart.js: `$ nodejs
 nodestart.js`. To launch the application from a browser environment,
