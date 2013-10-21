@@ -309,7 +309,7 @@ libraryObject = {
    ...
 };
 
-libraryFunction = funciton() {
+libraryFunction = function() {
    ...
 };
 ```
@@ -322,7 +322,7 @@ init = function() {
        ...
     };
 
-    libraryFunction = funciton() {
+    libraryFunction = function() {
        ...
     }
 }
@@ -345,7 +345,7 @@ this.someObject = {
    ...
 };
 
-this.someFunction = funciton() {
+this.someFunction = function() {
    ...
 };
 ```
@@ -362,7 +362,7 @@ init = function() {
        ...
     };
 
-    someLibrary.someFunction = funciton() {
+    someLibrary.someFunction = function() {
        ...
     }
 }
