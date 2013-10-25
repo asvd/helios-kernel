@@ -1,7 +1,7 @@
 /* Generics */
 
 .DlHighlight {
-    font: 8pt Bitstream Vera Sans Mono;
+    font: 8pt Bitstream Vera Sans Mono, monospace;
     color: #368FD5;
     text-shadow: 0px 0px 5px rgba(125, 184, 231, 0.13);
 
@@ -40,7 +40,7 @@ color : #27618F;
 }
 
 .DlHighlight .regexp { color: #b2c; }
-.DlHighlight .regexp .before, .DlHighlight .regexp .after { color: #509; font-family: Bitstream Vera Sans Mono Bold; }
+.DlHighlight .regexp .before, .DlHighlight .regexp .after { color: #509; font-family: Bitstream Vera Sans Mono Bold, monospace; }
 
 .DlHighlight .comment {
     color: #436885;
