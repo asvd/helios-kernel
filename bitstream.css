@@ -1,0 +1,49 @@
+@font-face {
+	font-family: Bitstream Vera Sans;
+	src: url('bitstream/Vera.ttf');
+}
+
+@font-face {
+	font-family: Bitstream Vera Sans Bold;
+	src: url('bitstream/VeraBd.ttf');
+}
+
+@font-face {
+	font-family: Bitstream Vera Sans Bold Italics;
+	src: url('bitstream/VeraBI.ttf');
+}
+
+@font-face {
+	font-family: Bitstream Vera Sans Italics;
+	src: url('bitstream/VeraIt.ttf');
+}
+
+@font-face {
+	font-family: Bitstream Vera Sans Mono;
+	src: url('bitstream/VeraMono.ttf');
+}
+
+@font-face {
+	font-family: Bitstream Vera Sans Mono Bold;
+	src: url('bitstream/VeraMoBd.ttf');
+}
+
+@font-face {
+	font-family: Bitstream Vera Sans Mono Bold Italics;
+	src: url('bitstream/VeraMoBI.ttf');
+}
+
+@font-face {
+	font-family: Bitstream Vera Sans Mono Italics;
+	src: url('bitstream/VeraMoIt.ttf');
+}
+
+@font-face {
+	font-family: Bitstream Vera Serif;
+	src: url('bitstream/VeraSe.ttf');
+}
+
+@font-face {
+	font-family: Bitstream Vera Serif Bold;
+	src: url('bitstream/VeraSeBd.ttf');
+}

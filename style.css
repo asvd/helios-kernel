@@ -1,0 +1,118 @@
+body {
+    font: 12pt Bitstream Vera Sans;
+    color : #8992A5;
+    background-color : #0A1420;
+    old-background-color : #18212C;
+    width : 600px;
+    padding-left : 100px;
+    padding-top : 50px;
+    padding-bottom : 20px;
+    line-height : 15pt;
+}
+
+
+table.pad {
+    margin-left : -42px;
+}
+
+
+td {
+    vertical-align : top;
+}
+
+
+
+td p.copy, td h1 {
+    padding-left : 10px;
+}
+
+p.copy {
+    font-size : 8pt;
+    line-height : 11pt;
+    text-align : left;
+    color: #376386;
+}
+
+a {
+    color : #2ED3BF;
+    text-shadow : 0px 0px 3px #13534C;
+
+    -o-transition:.4s;
+    -ms-transition:.4s;
+    -moz-transition:.4s;
+    -webkit-transition:.4s;
+    transition:.4s;
+}
+
+a:hover {
+    color : #49F8D5;
+    text-shadow : 0px 0px 8px #379B93;
+    old-text-shadow : 0px 0px 5px #666974;
+}
+
+
+h1, h2, h3, h4 {
+    color: #81A2BD;
+    text-shadow: 0px 0px 6px rgba(160, 198, 228, 0.25);
+}
+
+h1 {
+    margin-left: -3px;
+    font-size : 20pt;
+    font-weight : normal;
+}
+
+h2 {
+    font-size : 14pt;
+    font-weight : normal;
+    padding-top : 20px;
+    margin-bottom : -6px;
+}
+
+h3 {
+    font-size : 12pt;
+    font-weight : normal;
+    padding-top : 15px;
+    margin-bottom : -6px;
+}
+
+p, ol, ul {
+    text-align : justify;
+    font-size : 10pt;
+    font-weight : normal;
+}
+
+ol, ul {
+    margin-left : -40px;
+}
+
+p, li {
+    margin-bottom : 4px;
+}
+
+.code, .inline_code {
+    font: 8pt Bitstream Vera Sans Mono;
+    color: #368FD5;
+    text-shadow: 0px 0px 5px rgba(125, 184, 231, 0.13);
+    old-text-shadow: 0px 0px 10px rgba(213, 204, 142, 0.2);
+}
+
+.code {
+    border-left: 1px solid rgba(54, 143, 213, 0.38);
+    background-color: rgba(103, 165, 214, 0.04);
+    margin-left: -20px;
+    padding-left: 18px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    box-shadow: -3px 0px 8px -4px rgba(54, 143, 213, 0.32);
+    line-height : 12pt;
+}
+
+.inline_code {}
+
+.download {
+    margin-top : -5px;
+    font-size : 8pt;
+    line-height : 12pt;
+    padding-bottom : 10px;
+}
