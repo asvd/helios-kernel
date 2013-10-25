@@ -122,7 +122,7 @@ alternative to the CommonJS specifications.
 
 ### How to setup a new project based on the Helios Kernel
 
-1. Download the distribution [here](http://localhost) and unpack it somwhere
+1. Download the distribution [here](https://github.com/asvd/helios-kernel/releases/download/v0.9.4/helios-kernel-0.9.4.tar.gz) and unpack it somwhere
 
 2. Put your code to `main.js` inside the `init()` function, this is
 the starting point.
@@ -139,7 +139,7 @@ head (above the `init()` function declaration)
 
 ### How to use Kernel-compatible modules with an existing project
 
-1. Download the Helios Kernel distribution [here](http://localhost) and
+1. Download the Helios Kernel distribution [here](https://github.com/asvd/helios-kernel/releases/download/v0.9.4/helios-kernel-0.9.4.tar.gz) and
 unpack it somwhere
 
 2. Load the Helios Kernel code which is located in `kernel/kernel.js`
