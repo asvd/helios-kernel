@@ -127,14 +127,12 @@ alternative to the CommonJS specifications.
 and unpack it somwhere, i.e. in `helios-kernel/` directory. You may
 also use [npm](https://npmjs.org/) to install Helios Kernel under
 nodejs:
-
 ```sh
 $ npm install helios-kernel
 ```
 
 2. Create the initial module for the project, i.e. `main.js` with the
 following content:
-
 ```js
 // include the needed libraries here
 
@@ -143,7 +141,6 @@ init = function() {
     console.log('hello world!');
 }
 ```
-
 To declare the initial module dependences, use `include()` function at the
 module head
 
