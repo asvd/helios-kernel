@@ -106,9 +106,9 @@ using `include()`, without the need to transfer other modules'
 routines through the exported objects)
 
 - reuse "ordinary" javascript libraries designed to be loaded using
-the &lt;script&gt; tag in a html-page. Helios Kernel module format is very
-simple, so such library could be easily converted to a module by
-wrapping its code with an `init()` function declaration.
+the `&lt;script&gt;` tag in a html-page. Helios Kernel module format
+is very simple, so such library could be easily converted to a module
+by wrapping its code with an `init()` function declaration.
 
 
 
@@ -246,9 +246,9 @@ $ npm install helios-kernel
 - Load the Helios Kernel library script `kernel.js` in the
 distribution using any technique suitable for your
 project/environment. For a browser-based environment you could add a
-`&lt;script&gt;` tag to the head of HTML-document. For nodejs you could use
-node's `require()` function to load Helios Kernel (see examples
-in the previous section).
+`&lt;script&gt;` tag to the head of HTML-document. For nodejs you
+could use node's `require()` function to load Helios Kernel (see
+examples in the previous section).
 
 - After the Helios Kernel is loaded, you may use `kernel.require()`
 function to load any Kernel-compatible library.
@@ -399,10 +399,11 @@ garbage collector should (hopely) do the rest.
 
 If you have a library of any format, it usually defines a set of
 routines which should be later used from outside. In most of the
-web-libraries which are intednded to be included using the `&lt;script&gt;`
-tag, a set of global objects are simply defined. In this case it
-should be enough to wrap the library code with the `init()` function
-declaration. So if the original source was like this:
+web-libraries which are intednded to be included using the
+`&lt;script&gt;` tag, a set of global objects are simply defined. In
+this case it should be enough to wrap the library code with the
+`init()` function declaration. So if the original source was like
+this:
 
 ```js
 libraryObject = {
