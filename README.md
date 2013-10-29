@@ -133,6 +133,7 @@ $ npm install helios-kernel
 
 2. Create the initial module for the project, i.e. `main.js` with the
 following content:
+
 ```js
 // include the needed libraries here
 
