@@ -1,5 +1,5 @@
 /*********************************************************************
-  Helios Kernel 0.9.4 - javascript module loader
+  Helios Kernel - javascript module loader
 
   Licensed under MIT license, see http://github.com/asvd/helios-kernel
 

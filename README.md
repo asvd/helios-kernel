@@ -122,36 +122,94 @@ alternative to the CommonJS specifications.
 
 ### How to setup a new project based on the Helios Kernel
 
-1. Download the distribution [here](https://github.com/asvd/helios-kernel/releases/download/v0.9.4/helios-kernel-0.9.4.tar.gz) and unpack it somwhere
+1. Download the distribution
+[here](https://github.com/asvd/helios-kernel/releases/download/v0.9.5/helios-kernel-0.9.5.tar.gz)
+and unpack it somwhere, i.e. in `helios-kernel/` directory. You may
+also use [npm](https://npmjs.org/) to install Helios Kernel under
+nodejs:
 
-2. Put your code to `main.js` inside the `init()` function, this is
-the starting point.
+```sh
+$ npm install helios-kernel
+```
 
-3. To launch the application from nodejs, load `nodestart.js`: `$
-nodejs nodestart.js`. To launch the application from a browser
-environment, open `webstart.html` in a browser
+2. Create the initial module for the project, i.e. `main.js` with the
+following content:
 
-4. To declare module dependences, use `include()` function at the module
-head (above the `init()` function declaration)
+```js
+// include the needed libraries here
 
+init = function() {
+    // start your application code here
+    console.log('hello world!');
+}
+```
+
+To declare the initial module dependences, use `include()` function at the
+module head
+
+3. Create the web-based starting point which will load Helios Kernel
+source, and then require the project initial script. Web-based
+starting point could be for instance `index.html` with the following
+content:
+
+```html
+<script src="helios-kernel/kernel.js"></script>
+<script>
+    window.onload = function(){
+        kernel.require('main.js');
+    }
+</script>
+```
+
+4. Create the nodejs starting point which will load Helios Kernel
+library, and then require the project initial script. Starting point
+for nodejs could be for instance `nodestart.js` with the following
+content:
+
+```js
+require('helios-kernel/kernel.js');
+kernel.require( __dirname + '/main.js');
+```
+
+If you have used npm to install Helios Kernel, you may also do it like
+this:
+
+```js
+require('helios-kernel');
+kernel.require( __dirname + '/main.js');
+```
+
+4. To launch the application under web-browser, load the newly created
+`index.html`, or set the project directory as a web-server root. To
+start the application under node, launch the newly created
+`nodestart.js` using nodejs:
+
+```sh
+$ nodejs nodestart.js
+```
 
 
 
 ### How to use Kernel-compatible modules with an existing project
 
-1. Download the Helios Kernel distribution [here](https://github.com/asvd/helios-kernel/releases/download/v0.9.4/helios-kernel-0.9.4.tar.gz) and
-unpack it somwhere
+1. Download the Helios Kernel distribution
+[here](https://github.com/asvd/helios-kernel/releases/download/v0.9.5/helios-kernel-0.9.5.tar.gz)
+and unpack it somwhere. For nodejs you may also use npm to install
+Helios Kernel:
 
-2. Load the Helios Kernel code which is located in `kernel/kernel.js`
-in the distribution using any technique suitable for your
+```sh
+$ npm install helios-kernel
+```
+
+2. Load the Helios Kernel library script `kernel.js` in the
+distribution using any technique suitable for your
 project/environment. For a browser-based environment you could add a
-`<script>` tag to the head of HTML-document (see `webstart.html` for
-an example). For nodejs you could use node's `require()` function to
-load `kernel.js` (see `nodestart.js` for an example).
+`<script>` tag to the head of HTML-document. For nodejs you could use
+node's `require()` function to load Helios Kernel (see examples
+in the previous section).
 
-3. After the `kernel.js` is loaded, you may use `kernel.require()`
-function provided by Helios Kernel to load any Kernel-compatible
-library.
+3. After the Helios Kernel is loaded, you may use `kernel.require()`
+function to load any Kernel-compatible library.
 
 
 
