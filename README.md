@@ -2,12 +2,14 @@
 Helios Kernel
 =============
 
-Helios Kernel is an open-source cross-platform javascript module
-loader and dependence manager. It works both in browser-based
-environment and in [nodejs](http://nodejs.org/). Helios Kernel tracks
-modules dependence graph and can load and unload corresponding modules
+Helios Kernel is an open-source javascript module loader and
+dependence manager. The library itself and its module format are
+cross-compatible between the browser-based environment and
+[nodejs](http://nodejs.org/). Therefore it is possible to run the same
+code without any conversion in both environments. Helios Kernel tracks
+the dependency graph and can load and unload corresponding modules
 dynamically in the runtime according to the needs of different and
-independent parts of a project. It is smart enough to start
+independent parts of an application. It is smart enough to start
 initializing the modules which are ready for that, while others are
 still being downloaded or parsed, and to handle some tricky problems
 such as circular dependences or broken code (reporting the problem,
@@ -17,43 +19,64 @@ Helios Kernel is
 
 ### Simplicity
 
-Typical module has the following structure:
+Helios Kernel follows the [KISS
+principle](http://en.wikipedia.org/wiki/KISS_principle), which means
+that it only contains the necessary features intended to make
+dependency management simple and flexible.
+
+Dependency declaration is implemented in the classic
+inculde-style. This is an example of a module which includes and
+reuses some dependencies:
 
 ```js
-// dependences
-include("path/to/module1.js");
-include("../path/to/another/module2.js");
+// list of dependences
+include("path/to/myLibrary.js");
+include("../path/to/anotherLibrary.js");
 
 init = function() {
-    // module code which relies on the dependences
-    ...
-    ...
-    ...
+    // module code
+    // at this point the dependencies are loaded and ready to use
+    myLibrary.sayHello();
 }
 ```
 
-A set of `include()` expressions at the top is similar to including an
-external source in many other programming languages/environments.
-Helios Kernel will issue the code within the `init()` function of a
-module as soon as all dependences included at the module head are
-loaded.
+In the head of a module, a set of dependences are listed using the
+`include()` function. Each call of this function stands for a single
+dependence. The code inside the `init()` function declaration is a
+module code. It will be issued by Helios Kernel as soon as all
+dependences included at the module head are loaded.
 
-The only argument of the `include()` function is the exact relative path
-to the module which should be loaded beforehand — so that it is always
-easy to find out the particular dependence source locaiton.
+The only argument of the `include()` function is the exact path to the
+module which should be loaded beforehand — so that it is always easy
+to find out the particular dependence source locaiton.
 
-Inside the `init()` function of a module, a set of global objects are to
-be declared, which will be visible by the dependent modules, and will
-thus make up the module interface.
+This is how `myLibrary.js` included in the module above could be:
 
-This is basicly everything you need to know to use Helios Kernel for
-setting-up the dependencies in your project. Simplicity of Helios
-Kernel is intended to provide an alternative to different
-implementatios of [AMD
-API](https://github.com/amdjs/amdjs-api/wiki/AMD) for instance, which
-are popular nowadays, but seem to be a bit overdesigned.
+```js
+init = function() {
+    // (globally) declaring a library object
+    myLibrary = {};
 
-This page contains the full documentation on the Helios Kernel.
+    // library method
+    myLibrary.sayHello = function() {
+        console.log("Hello World!");
+    }
+}
+```
+
+In the example above, the `init()` function declares a global
+object. This way of exproting data is considered unsafe sometimes,
+since it could lead to data collision.  But in this text this approach
+is used because of its simplicity. Helios Kernel does not force a
+specific way of exporting: `init()` function may contain any code you
+prefer. Particulary it could declare a factory function safely
+returning a library object. (But if you only need to keep some private
+module data, you may use the `init()` function scope)
+
+This is basicly everything you need to know to start using Helios
+Kernel for setting-up dependencies in your project.
+
+This text contains the full documentation on Helios Kernel.
 
 
 ### How can Kernel be useful for browser-based applications
@@ -66,7 +89,27 @@ this case, and gets more and more complicated along with the project
 growth.
 
 To solve this problem, several script loading approaches and libraries
-exist, one of which is Helios Kernel.
+exist, one of which is Helios Kernel. This library may be preferred in
+case when there is a need to create an application which will be
+compatible between web environment and nodejs without any conversion.
+One may also choose Helios Kernel because of its simplicity. Comparing
+to other approaches which seem a bit overdesigned sometimes, with
+Helios Kernel it could be more convenient to:
+
+- modify or refactor a list of dependencies, especially when are a lot
+of them (each dependency is just a single `include()` line at the
+module head)
+
+- create a compound module which should load several modules used at
+once (in Helios Kernel such module could simply list all dependences
+using `include()`, without the need to transfer other modules'
+routines through the exported objects)
+
+- reuse "ordinary" javascript libraries designed to be loaded using
+the <script> tag in a html-page. Helios Kernel module format is very
+simple, so such library could be easily converted to a module by
+wrapping its code with an `init()` function declaration.
+
 
 
 ### How can Kernel be useful for nodejs applications
@@ -113,10 +156,9 @@ alternative to the CommonJS specifications.
   Kernel module — in most cases its code should simply be wrapped with
   an `init()` function declaration
 
-- Helios Kernel modules format is cross-compatible between browser and
-  nodejs enviroment, therefore it is possible to create a library
-  which will work unchanged under both environments (of course until
-  there is some specific platform-dependent code)
+- And of course, since the library and the module format are
+  cross-compatible both in browser environment, and in nodejs, you may
+  also run the same code in a browser without any conversion
 
 
 
