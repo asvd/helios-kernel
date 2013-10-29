@@ -122,17 +122,19 @@ alternative to the CommonJS specifications.
 
 ### How to setup a new project based on the Helios Kernel
 
-1. Download the distribution
+- Download the distribution
 [here](https://github.com/asvd/helios-kernel/releases/download/v0.9.5/helios-kernel-0.9.5.tar.gz)
 and unpack it somwhere, i.e. in `helios-kernel/` directory. You may
 also use [npm](https://npmjs.org/) to install Helios Kernel under
 nodejs:
+
 ```sh
 $ npm install helios-kernel
 ```
 
-2. Create the initial module for the project, i.e. `main.js` with the
+- Create the initial module for the project, i.e. `main.js` with the
 following content:
+
 ```js
 // include the needed libraries here
 
@@ -145,7 +147,7 @@ init = function() {
 To declare the initial module dependences, use `include()` function at the
 module head
 
-3. Create the web-based starting point which will load Helios Kernel
+- Create the web-based starting point which will load Helios Kernel
 source, and then require the project initial script. Web-based
 starting point could be for instance `index.html` with the following
 content:
@@ -159,7 +161,7 @@ content:
 </script>
 ```
 
-4. Create the nodejs starting point which will load Helios Kernel
+- Create the nodejs starting point which will load Helios Kernel
 library, and then require the project initial script. Starting point
 for nodejs could be for instance `nodestart.js` with the following
 content:
