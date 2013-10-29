@@ -27,7 +27,7 @@
 
 
       <p class="download">
-        <a href="https://github.com/asvd/helios-kernel/releases/download/v0.9.4/helios-kernel-0.9.4.tar.gz">helios-kernel-0.9.4.tar.gz</a>
+        <a href="https://github.com/asvd/helios-kernel/releases/download/v0.9.5/helios-kernel-0.9.5.tar.gz">helios-kernel-0.9.5.tar.gz</a>
         12&nbsp;kb
         <br/>
         <a href="https://github.com/asvd/helios-kernel">https://github.com/asvd/helios-kernel</a>
@@ -53,7 +53,7 @@ feature of the Helios Kernel is
 Typical module has the following structure:
 </p>
 
-<pre name="code" class="js"><div class=code>// dependences
+<pre name="code" class="js">// dependences
 include("path/to/module1.js");
 include("../path/to/another/module2.js");
 
@@ -63,7 +63,7 @@ init = function() {
     ...
     ...
 }
-</div></pre>
+</pre>
 
 <p>
 A set of <span class=inline_code>include()</span> expressions at the top is similar to including an
@@ -200,32 +200,78 @@ alternative to the CommonJS specifications.
 
   <ol>
     <li>
- Download the
-distribution <a href="https://github.com/asvd/helios-kernel/releases/download/v0.9.4/helios-kernel-0.9.4.tar.gz">here</a> and unpack
-it somwhere
+Download the distribution
+<a href="https://github.com/asvd/helios-kernel/releases/download/v0.9.5/helios-kernel-0.9.5.tar.gz">here</a>
+and unpack it somwhere, i.e. in <span class=inline_code>helios-kernel/</span> directory. You may
+also use <a href="https://npmjs.org/">npm</a> to install Helios Kernel under
+nodejs:
+
+<pre name="code" class="js">$ npm install helios-kernel
+</pre>
    </li>
 
    <li>
- Put your code to <span class=inline_code>main.js</span> inside
-the <span class=inline_code>init()</span> function, this is the
-starting point.
+Create the initial module for the project, i.e. <span class=inline_code>main.js</span> with the
+following content:
+
+<pre name="code" class="js">// include the needed libraries here
+
+init = function() {
+    // start your application code here
+    console.log('hello world!');
+}
+</pre>
+
+To declare the initial module dependences,
+use <span class=inline_code>include()</span> function at the module
+head
+   </li>
+
+
+   <li>
+Create the web-based starting point which will load Helios Kernel
+source, and then require the project initial script. Web-based
+starting point could be for instance <span class=inline_code>index.html</span> with the following
+content:
+
+<pre name="code" class="html">&lt;script src="helios-kernel/kernel.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+    window.onload = function(){
+        kernel.require('main.js');
+    }
+&lt;/script&gt;
+</pre>
    </li>
 
    <li>
- To launch the application from nodejs, load <span class=inline_code>nodestart.js</span>:
+Create the nodejs starting point which will load Helios Kernel
+library, and then require the project initial script. Starting point
+for nodejs could be for instance <span class=inline_code>nodestart.js</span> with the following
+content:
 
-<pre name="code" class="js"><div class=code>$ nodejs nodestart.js
-</div></pre>
+<pre name="code" class="js">require('helios-kernel/kernel.js');
+kernel.require( __dirname + '/main.js');
+</pre>
 
- To launch the application from a browser environment, open
-<span class=inline_code>webstart.html</span> in a browser
+If you have used npm to install Helios Kernel, you may also do it like
+this:
+
+<pre name="code" class="js">require('helios-kernel');
+kernel.require( __dirname + '/main.js');
+</pre>
    </li>
 
+
    <li>
- To declare module dependences, use <span class=inline_code>include()</span> function at the module
-head (above the <span class=inline_code>init()</span> function declaration)
+To launch the application under web-browser, load the newly created
+<span class=inline_code>index.html</span>, or set the project directory as a web-server root. To
+start the application under node, launch the newly created
+<span class=inline_code>nodestart.js</span> using nodejs:
+
+<pre name="code" class="js">$ nodejs nodestart.js
+</pre>
     </li>
-  </ol>
+   </ol>
 
 
 <h2>How to use Helios Kernel modules with an existing project</h2>
@@ -233,26 +279,26 @@ head (above the <span class=inline_code>init()</span> function declaration)
   <ol>
     <li>
  Download the Helios Kernel
-distribution <a href="https://github.com/asvd/helios-kernel/releases/download/v0.9.4/helios-kernel-0.9.4.tar.gz">here</a> and unpack
-it somwhere
+distribution <a href="https://github.com/asvd/helios-kernel/releases/download/v0.9.5/helios-kernel-0.9.5.tar.gz">here</a> and unpack
+it somwhere. For nodejs you may also use npm to install
+Helios Kernel:
+<pre name="code" class="js">$ npm install helios-kernel
+</pre>
     </li>
 
     <li>
- Load the Helios Kernel code which is located in <span class=inline_code>kernel/kernel.js</span>
-in the distribution using any technique suitable for your
+      Load the Helios Kernel library script <span class=inline_code>kernel.js</span> in the
+distribution using any technique suitable for your
 project/environment. For a browser-based environment you could add a
-<span class=inline_code>&lt;script&gt;</span> tag to the head of
-HTML-document (see <span class=inline_code>webstart.html</span> for an
-example). For nodejs you could use
-node's <span class=inline_code>require()</span> function to load
-<span class=inline_code>kernel.js</span>
-(see <span class=inline_code>nodestart.js</span> for an example).
+<span class=inline_code>&lt;script&gt;</span> tag to the head of HTML-document. For nodejs you could use
+node's <span class=inline_code>require()</span> function to load Helios Kernel (see examples
+in the previous section).
     </li>
 
     <li>
  After the <span class=inline_code>kernel.js</span> is loaded, you may
-use <span class=inline_code>kernel.require()</span> function provided
-by Helios Kernel to load any Kernel-compatible library.
+use <span class=inline_code>kernel.require()</span> function to load
+any Kernel-compatible library.
     </li>
   </ol>
 
@@ -273,7 +319,7 @@ module <span class=inline_code>library.js</span> providing a library
 function to any module which will include it:
 </p>
 
-<pre name="code" class="js"><div class=code>// library.js module initializer
+<pre name="code" class="js">// library.js module initializer
 init = function() {
     // global object containing the library routines
     myLibrary = {};
@@ -283,19 +329,19 @@ init = function() {
         console.log('hello');
     }
 }
-</div></pre>
+</pre>
 
 <p>
 And this is how a module using that library should look like:
 </p>
 
-<pre name="code" class="js"><div class=code>include("path/to/library.js");
+<pre name="code" class="js">include("path/to/library.js");
 
 init = function() {
     // library is loaded and we can use it at this point
     myLibrary.doSomething();  // will print 'hello'
 }
-</div></pre>
+</pre>
 
 <h2>Dynamical module loading</h2>
 
@@ -341,7 +387,7 @@ don't need them anymore.
 Therefore, dynamically loading a module looks like this:
 </p>
 
-<pre name="code" class="js"><div class=code>var sCallback = function() {
+<pre name="code" class="js">var sCallback = function() {
     // the library is loaded, we may use it now
     myLibrary.doSomething();
 }
@@ -354,15 +400,15 @@ var fCallback = function() {
 var ticket = kernel.require(
     '/path/to/library.js', sCallback, fCallback
 );
-</div></pre>
+</pre>
 
 <p>
 After you have finished using the requested modules, you may release
 the ticket by calling <span class=inline_code>kernel.release()</span> function:
 </p>
 
-<pre name="code" class="js"><div class=code>kernel.release(ticket);
-</div></pre>
+<pre name="code" class="js">kernel.release(ticket);
+</pre>
 
 <p>
 This will not make the Kernel unload the module immediately, instead
@@ -385,7 +431,7 @@ be called during the module unload.
 Therefore the full version of a library module will look like this:
 </p>
 
-<pre name="code" class="js"><div class=code>// module initializer
+<pre name="code" class="js">// module initializer
 init = function() {
     // global object containing the library routines
     myLibrary = {};
@@ -403,7 +449,7 @@ uninit = function() {
     myLibrary = null;
     delete myLibrary;
 }
-</div></pre>
+</pre>
 
 <p>
 If a module initializer declares a single compound object containing
@@ -425,20 +471,20 @@ the library code with the <span class=inline_code>init()</span>
 function declaration. So if the original source was like this:
 </p>
 
-<pre name="code" class="js"><div class=code>libraryObject = {
+<pre name="code" class="js">libraryObject = {
    ...
 };
 
 libraryFunction = function() {
    ...
 };
-</div></pre>
+</pre>
 
 <p>
 then it should be remade like this:
 </p>
 
-<pre name="code" class="js"><div class=code>init = function() {
+<pre name="code" class="js">init = function() {
     libraryObject = {
        ...
     };
@@ -447,7 +493,7 @@ then it should be remade like this:
        ...
     }
 }
-</div></pre>
+</pre>
 
 <p>
 Now this is a Helios Kernel compatible module, and could be loaded
@@ -466,20 +512,20 @@ function, and the export object should be declared globally. For
 instance, a nodejs module usually looks like this:
 </p>
 
-<pre name="code" class="js"><div class=code>this.someObject = {
+<pre name="code" class="js">this.someObject = {
    ...
 };
 
 this.someFunction = function() {
    ...
 };
-</div></pre>
+</pre>
 
 <p>
 To be converted to the Helios module, it should be remade like this:
 </p>
 
-<pre name="code" class="js"><div class=code>init = function() {
+<pre name="code" class="js">init = function() {
     // global library object
     someLibrary = {};
 
@@ -491,7 +537,7 @@ To be converted to the Helios module, it should be remade like this:
        ...
     }
 }
-</div></pre>
+</pre>
 
 <p>
 After this module is loaded, its routines should be refered as
