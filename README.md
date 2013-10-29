@@ -143,7 +143,6 @@ init = function() {
     console.log('hello world!');
 }
 ```
-
 To declare the initial module dependences, use `include()` function at the
 module head
 
