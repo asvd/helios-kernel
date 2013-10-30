@@ -64,11 +64,11 @@ init = function() {
 }
 ```
 
-In the example above, the `init()` function declares a global
-object. This way of exproting data is considered unsafe sometimes,
-since it could lead to data collision.  But in this text such approach
-is used because of its simplicity. Helios Kernel does not force a
-specific way of exporting: `init()` function may contain any code you
+In this example, the `init()` function declares a global object. This
+way of exproting data is considered unsafe sometimes, since it could
+lead to data collision.  But in this text such approach is used
+because of its simplicity. Helios Kernel does not force a specific way
+of exporting: `init()` function may contain any code you
 prefer. Particulary it could declare a factory function safely
 returning a library object. (But if you only need to keep some private
 module data, you may use the `init()` function scope)
