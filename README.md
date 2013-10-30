@@ -34,7 +34,7 @@ include("path/to/myLibrary.js");
 include("../path/to/anotherLibrary.js");
 
 init = function() {
-    // module code
+    // module code,
     // at this point the dependencies are loaded and ready to use
     myLibrary.sayHello();
 }
@@ -50,7 +50,7 @@ The only argument of the `include()` function is the exact path to the
 module which should be loaded beforehand — so that it is always easy
 to find out the particular dependence source locaiton.
 
-This is how `myLibrary.js` included in the module above could be:
+This is how `myLibrary.js` included in the module above could look:
 
 ```js
 init = function() {
@@ -66,7 +66,7 @@ init = function() {
 
 In the example above, the `init()` function declares a global
 object. This way of exproting data is considered unsafe sometimes,
-since it could lead to data collision.  But in this text this approach
+since it could lead to data collision.  But in this text such approach
 is used because of its simplicity. Helios Kernel does not force a
 specific way of exporting: `init()` function may contain any code you
 prefer. Particulary it could declare a factory function safely
@@ -260,7 +260,7 @@ function to load any Kernel-compatible library.
 A module code should be located inside the `init()` function body which
 is declared globally for each module. Above that function, a set of
 dependences are listed using the `include()` function. Inside the `init()`
-function, global objects should be declared. These are the objects
+function, global objects could be declared. These are the objects
 provided by the module to other modules which include this module as a
 dependence.
 
