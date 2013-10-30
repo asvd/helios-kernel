@@ -12,7 +12,7 @@ dynamically in the runtime according to the needs of different and
 independent parts of an application. It is smart enough to start
 initializing the modules which are ready for that, while others are
 still being downloaded or parsed, and to handle some tricky problems
-such as circular dependences or broken code (reporting the problem,
+such as circular dependencies or broken code (reporting the problem,
 but still keeping the application alive). But the key feature of the
 Helios Kernel is
 
@@ -29,7 +29,7 @@ inculde-style. This is an example of a module which includes and
 reuses some dependencies:
 
 ```js
-// list of dependences
+// list of dependencies
 include("path/to/myLibrary.js");
 include("../path/to/anotherLibrary.js");
 
@@ -40,11 +40,11 @@ init = function() {
 }
 ```
 
-In the head of a module, a set of dependences are listed using the
+In the head of a module, a set of dependencies are listed using the
 `include()` function. Each call of this function stands for a single
 dependence. The code inside the `init()` function declaration is a
 module code. It will be issued by Helios Kernel as soon as all
-dependences included at the module head are loaded.
+dependencies included at the module head are loaded.
 
 The only argument of the `include()` function is the exact path to the
 module which should be loaded beforehand — so that it is always easy
@@ -84,7 +84,7 @@ This text contains the full documentation on Helios Kernel.
 In the browser environments there is no native dependence management
 solution. To ensure that a set of javascript-libraries is loaded, the
 libraries are usually listed within a single html-page
-header. Managing the dependences and loading order is too tricky in
+header. Managing the dependencies and loading order is too tricky in
 this case, and gets more and more complicated along with the project
 growth.
 
@@ -101,7 +101,7 @@ of them (each dependency is just a single `include()` line at the
 module head)
 
 - create a compound module which should load several modules used at
-once (in Helios Kernel such module could simply list all dependences
+once (in Helios Kernel such module could simply list all dependencies
 using `include()`, without the need to transfer other modules'
 routines through the exported objects)
 
@@ -123,23 +123,23 @@ alternative to the CommonJS specifications.
 
 #### What is simplier:
 
-- It is easier to see and declare module's dependences (they are
+- It is easier to see and declare module's dependencies (they are
   always listed in the module head, not inside its body, not in some
   external config)
 
-- There could be no 'hidden' dependences declared in the middle of a
+- There could be no 'hidden' dependencies declared in the middle of a
   code (dynamically loading additional modules is a different use-case
   which is performed by the `kernel.require()` function)
 
 - It is easier to find out where the particular dependence source code
-  is located (dependences are always declared by exact path)
+  is located (dependencies are always declared by exact path)
 
 - Module structure, documentation and usage are simplier (there is no
   need to declare a special export object and reuse it in the
   dependent modules, instead library objects are exported using the
   global scope, and they are always referred with the same name)
 
-- Circular dependences considered as an error (which prevents
+- Circular dependencies considered as an error (which prevents
   dependence mess-up and helps to keep everything in order)
 
 - It is easier to split the library objects between the different
@@ -186,7 +186,7 @@ init = function() {
 }
 ```
 
-To declare the initial module dependences, use `include()` function at the
+To declare the initial module dependencies, use `include()` function at the
 module head
 
 - Create the web-based starting point which will load Helios Kernel
@@ -259,7 +259,7 @@ function to load any Kernel-compatible library.
 
 A module code should be located inside the `init()` function body which
 is declared globally for each module. Above that function, a set of
-dependences are listed using the `include()` function. Inside the `init()`
+dependencies are listed using the `include()` function. Inside the `init()`
 function, global objects could be declared. These are the objects
 provided by the module to other modules which include this module as a
 dependence.
@@ -309,7 +309,7 @@ starting with a protocol (`http://...`). You may also provide an array
 of paths to load several modules at once.
 
 Second argument, the success callback, is a function which is called
-after all demanded modules and their dependences are successfully
+after all demanded modules and their dependencies are successfully
 loaded and initialized. Inside that callback you may start using the
 objects provided by the requested modules.
 
