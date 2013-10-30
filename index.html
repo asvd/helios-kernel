@@ -34,7 +34,7 @@
       </p>
 <p>
 Helios Kernel is an open-source javascript module loader and
-dependence manager. The library itself and its module format are
+dependency manager. The library itself and its module format are
 cross-compatible between the browser-based environment and
 <a href="http://nodejs.org/">nodejs</a>. Therefore it is possible to
 run the same code without any conversion in both environments. Helios
@@ -78,7 +78,7 @@ init = function() {
 <p>
 In the head of a module, a set of dependencies are listed using the
 <span class=inline_code>include()</span> function. Each call of this
-function stands for a single dependence. The code inside
+function stands for a single dependency. The code inside
 the <span class=inline_code>init()</span> function declaration is a
 module code. It will be issued by Helios Kernel as soon as all
 dependencies included at the module head are loaded.
@@ -88,7 +88,7 @@ dependencies included at the module head are loaded.
 The only argument of the <span class=inline_code>include()</span>
 function is the exact path to the module which should be loaded
 beforehand &mdash; so that it is always easy to find out the
-particular dependence source locaiton.
+particular dependency source locaiton.
 </p>
 
 <p>
@@ -135,7 +135,7 @@ This text contains the full documentation on Helios Kernel.
 <h2>How can Kernel be useful for browser-based applications</h2>
 
 <p>
-In the browser environments there is no native dependence management
+In the browser environments there is no native dependency management
 solution. To ensure that a set of javascript-libraries is loaded, the
 libraries are usually listed within a single html-page
 header. Managing the dependencies and loading order is too tricky in
@@ -178,7 +178,7 @@ could be easily converted to a module by wrapping its code with an
 <h2>How can Kernel be useful for nodejs applications</h2>
 
 <p>
-In nodejs there is a native dependence declaration technique &mdash; the
+In nodejs there is a native dependency declaration technique &mdash; the
 <span class=inline_code>require()</span> function which implements the
 specifications suggested by
 the <a href="http://en.wikipedia.org/wiki/CommonJS">CommonJS</a>
@@ -207,7 +207,7 @@ alternative to the CommonJS specifications.
   </li>
 
   <li>
- It is easier to find out where the particular dependence source code
+ It is easier to find out where the particular dependency source code
   is located (dependencies are always declared by exact path)
   </li>
 
@@ -220,7 +220,7 @@ alternative to the CommonJS specifications.
 
   <li>
  Circular dependencies considered as an error (which prevents
-  dependence mess-up and helps to keep everything in order)
+  dependency mess-up and helps to keep everything in order)
   </li>
 
   <li>
@@ -371,7 +371,7 @@ dependencies are listed using
 the <span class=inline_code>include()</span> function. Inside
 the <span class=inline_code>init()</span> function, global objects
 could be declared. These are the objects provided by the module to
-other modules which include this module as a dependence.
+other modules which include this module as a dependency.
 </p>
 
 <p>
@@ -413,7 +413,7 @@ takes three arguments &mdash; absolute path of the module, and two callbacks
 </p>
 
 <p>
-Unlike <span class=inline_code>include()</span> which is used for declaring a dependence in a
+Unlike <span class=inline_code>include()</span> which is used for declaring a dependency in a
 module head, and is mostly intended to work with relative paths,
 <span class=inline_code>kernel.require()</span> only accepts specifying the absolute path. For a
 web environment you may start it with the slash <span class=inline_code>/</span> which will stand
@@ -431,7 +431,7 @@ objects provided by the requested modules.
 
 <p>
 Third argument is a failure callback which will be called in case if
-some of the requested modules (or their dependence) has failed to be
+some of the requested modules (or their dependency) has failed to be
 loaded. Reasons could be very different (from syntax error and to
 network problems), therefore you must implement some reasonable
 fallback or cancellation behaviour for the loading failure.
