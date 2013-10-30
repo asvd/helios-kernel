@@ -3,7 +3,7 @@ Helios Kernel
 =============
 
 Helios Kernel is an open-source javascript module loader and
-dependence manager. The library itself and its module format are
+dependency manager. The library itself and its module format are
 cross-compatible between the browser-based environment and
 [nodejs](http://nodejs.org/). Therefore it is possible to run the same
 code without any conversion in both environments. Helios Kernel tracks
@@ -42,13 +42,13 @@ init = function() {
 
 In the head of a module, a set of dependencies are listed using the
 `include()` function. Each call of this function stands for a single
-dependence. The code inside the `init()` function declaration is a
+dependency. The code inside the `init()` function declaration is a
 module code. It will be issued by Helios Kernel as soon as all
 dependencies included at the module head are loaded.
 
 The only argument of the `include()` function is the exact path to the
 module which should be loaded beforehand — so that it is always easy
-to find out the particular dependence source locaiton.
+to find out the particular dependency source locaiton.
 
 This is how `myLibrary.js` included in the module above could look:
 
@@ -81,7 +81,7 @@ This text contains the full documentation on Helios Kernel.
 
 ### How can Kernel be useful for browser-based applications
 
-In the browser environments there is no native dependence management
+In the browser environments there is no native dependency management
 solution. To ensure that a set of javascript-libraries is loaded, the
 libraries are usually listed within a single html-page
 header. Managing the dependencies and loading order is too tricky in
@@ -114,7 +114,7 @@ by wrapping its code with an `init()` function declaration.
 
 ### How can Kernel be useful for nodejs applications
 
-In nodejs there is a native dependence declaration technique — the
+In nodejs there is a native dependency declaration technique — the
 `require()` function which implements the specifications suggested by
 [CommonJS](http://en.wikipedia.org/wiki/CommonJS) group.
 
@@ -131,7 +131,7 @@ alternative to the CommonJS specifications.
   code (dynamically loading additional modules is a different use-case
   which is performed by the `kernel.require()` function)
 
-- It is easier to find out where the particular dependence source code
+- It is easier to find out where the particular dependency source code
   is located (dependencies are always declared by exact path)
 
 - Module structure, documentation and usage are simplier (there is no
@@ -140,7 +140,7 @@ alternative to the CommonJS specifications.
   global scope, and they are always referred with the same name)
 
 - Circular dependencies considered as an error (which prevents
-  dependence mess-up and helps to keep everything in order)
+  dependency mess-up and helps to keep everything in order)
 
 - It is easier to split the library objects between the different
   modules (since there is no export object, it is easier to create a
@@ -262,7 +262,7 @@ is declared globally for each module. Above that function, a set of
 dependencies are listed using the `include()` function. Inside the `init()`
 function, global objects could be declared. These are the objects
 provided by the module to other modules which include this module as a
-dependence.
+dependency.
 
 For instance, you could have a module `library.js` providing a library
 function to any module which will include it:
@@ -300,7 +300,7 @@ To load a module in the runtime, use `kernel.require()` function. It
 takes three arguments — absolute path of the module, and two callbacks —
 for a success and for a failure.
 
-Unlike `include()` which is used for declaring a dependence in a
+Unlike `include()` which is used for declaring a dependency in a
 module head, and is mostly intended to work with relative paths,
 `kernel.require()` only accepts specifying the absolute path. For a
 web environment you may start it with the slash `/` which will stand
@@ -314,7 +314,7 @@ loaded and initialized. Inside that callback you may start using the
 objects provided by the requested modules.
 
 Third argument is a failure callback which will be called in case if
-some of the requested modules (or their dependence) has failed to be
+some of the requested modules (or their dependency) has failed to be
 loaded. Reasons could be very different (from syntax error and to
 network problems), therefore you must implement some reasonable
 fallback or cancellation behaviour for the loading failure.
