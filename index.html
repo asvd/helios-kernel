@@ -43,7 +43,7 @@ corresponding modules dynamically in the runtime according to the
 needs of different and independent parts of an application. It is
 smart enough to start initializing the modules which are ready for
 that, while others are still being downloaded or parsed, and to handle
-some tricky problems such as circular dependences or broken code
+some tricky problems such as circular dependencies or broken code
 (reporting the problem, but still keeping the application alive). But
 the key feature of the Helios Kernel is
 </p>
@@ -64,7 +64,7 @@ inculde-style. This is an example of a module which includes and
 reuses some dependencies:
 </p>
 
-<pre name="code" class="js">// list of dependences
+<pre name="code" class="js">// list of dependencies
 include("path/to/myLibrary.js");
 include("../path/to/anotherLibrary.js");
 
@@ -76,12 +76,12 @@ init = function() {
 </pre>
 
 <p>
-In the head of a module, a set of dependences are listed using the
+In the head of a module, a set of dependencies are listed using the
 <span class=inline_code>include()</span> function. Each call of this
 function stands for a single dependence. The code inside
 the <span class=inline_code>init()</span> function declaration is a
 module code. It will be issued by Helios Kernel as soon as all
-dependences included at the module head are loaded.
+dependencies included at the module head are loaded.
 </p>
 
 <p>
@@ -138,7 +138,7 @@ This text contains the full documentation on Helios Kernel.
 In the browser environments there is no native dependence management
 solution. To ensure that a set of javascript-libraries is loaded, the
 libraries are usually listed within a single html-page
-header. Managing the dependences and loading order is too tricky in
+header. Managing the dependencies and loading order is too tricky in
 this case, and gets more and more complicated along with the project
 growth.
 </p>
@@ -161,7 +161,7 @@ module head)
   </li>
   <li>
 create a compound module which should load several modules used at
-once (in Helios Kernel such module could simply list all dependences
+once (in Helios Kernel such module could simply list all dependencies
 using <span class=inline_code>include()</span>, without the need to
 transfer other modules' routines through the exported objects)
   </li>
@@ -195,20 +195,20 @@ alternative to the CommonJS specifications.
 
 <ul>
   <li>
- It is easier to see and declare module's dependences (they are
+ It is easier to see and declare module's dependencies (they are
   always listed in the module head, not inside its body, not in some
   external config)
   </li>
 
   <li>
- There could be no 'hidden' dependences declared in the middle of a
+ There could be no 'hidden' dependencies declared in the middle of a
   code (dynamically loading additional modules is a different use-case
   which is performed by the <span class=inline_code>kernel.require()</span> function)
   </li>
 
   <li>
  It is easier to find out where the particular dependence source code
-  is located (dependences are always declared by exact path)
+  is located (dependencies are always declared by exact path)
   </li>
 
   <li>
@@ -219,7 +219,7 @@ alternative to the CommonJS specifications.
   </li>
 
   <li>
- Circular dependences considered as an error (which prevents
+ Circular dependencies considered as an error (which prevents
   dependence mess-up and helps to keep everything in order)
   </li>
 
@@ -281,7 +281,7 @@ init = function() {
 }
 </pre>
 
-To declare the initial module dependences,
+To declare the initial module dependencies,
 use <span class=inline_code>include()</span> function at the module
 head
    </li>
@@ -367,7 +367,7 @@ any Kernel-compatible library.
 A module code should be located inside
 the <span class=inline_code>init()</span> function body which is
 declared globally for each module. Above that function, a set of
-dependences are listed using
+dependencies are listed using
 the <span class=inline_code>include()</span> function. Inside
 the <span class=inline_code>init()</span> function, global objects
 could be declared. These are the objects provided by the module to
@@ -424,7 +424,7 @@ of paths to load several modules at once.
 
 <p>
 Second argument, the success callback, is a function which is called
-after all demanded modules and their dependences are successfully
+after all demanded modules and their dependencies are successfully
 loaded and initialized. Inside that callback you may start using the
 objects provided by the requested modules.
 </p>
