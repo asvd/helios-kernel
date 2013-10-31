@@ -1,7 +1,7 @@
 body {
     font: 12pt Bitstream Vera Sans, sans-serif;
-    color : #8992A5;
-    background-color : #0A1420;
+    color : #A5BAC9;
+    background-color : #121C29;
     old-background-color : #18212C;
     width : 600px;
     padding-left : 100px;
@@ -34,7 +34,7 @@ p.copy {
 }
 
 a {
-    color : #2ED3BF;
+    color : #2CF3DB;
     text-shadow : 0px 0px 3px #13534C;
 
     -o-transition:.4s;
@@ -45,15 +45,14 @@ a {
 }
 
 a:hover {
-    color : #49F8D5;
-    text-shadow : 0px 0px 8px #379B93;
-    old-text-shadow : 0px 0px 5px #666974;
+    color : #60FFE0;
+    text-shadow : 0px 0px 8px #62C5BD;
 }
 
 
 h1, h2, h3, h4 {
-    color: #81A2BD;
-    text-shadow: 0px 0px 6px rgba(160, 198, 228, 0.25);
+    color: #A0C6E5;
+    text-shadow: 0px 0px 7px rgba(160, 217, 228, 0.45);
 }
 
 h1 {
@@ -92,7 +91,7 @@ p, li {
 
 .code, .inline_code {
     font: 8pt Bitstream Vera Sans Mono, monospace;
-    color: #368FD5;
+    color: #48AFFF;
     text-shadow: 0px 0px 5px rgba(125, 184, 231, 0.13);
     old-text-shadow: 0px 0px 10px rgba(213, 204, 142, 0.2);
 }

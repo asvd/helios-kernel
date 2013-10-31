@@ -2,7 +2,7 @@
 
 .DlHighlight {
     font: 8pt Bitstream Vera Sans Mono, monospace;
-    color: #368FD5;
+    color: #48AFFF;
     text-shadow: 0px 0px 5px rgba(125, 184, 231, 0.13);
 
     border-left: 1px solid rgba(54, 143, 213, 0.38);
@@ -20,7 +20,7 @@
 .DlHighlight pre { margin: 0; padding: 0; }
 
 .DlHighlight .keyword {
-color: #5EA6DF;
+color: #6BBEFF;
 text-shadow: 0px 0px 8px rgba(160, 198, 228, 0.34);
 }
 
@@ -31,7 +31,7 @@ color : #59AAE9;
 
 .DlHighlight .string {
 font-style: italic;
-color : #27618F;
+color : #3B87C4;
 }
 
 .DlHighlight .string .before, .DlHighlight .string .after {
@@ -43,10 +43,10 @@ color : #27618F;
 .DlHighlight .regexp .before, .DlHighlight .regexp .after { color: #509; font-family: Bitstream Vera Sans Mono Bold, monospace; }
 
 .DlHighlight .comment {
-    color: #436885;
+    color: #4E7EA5;
 }
 .DlHighlight .comment .before, .DlHighlight .comment .after {
-    color: #436885;
+    color: #4E7EA5;
 }
 
 .DlHighlight .hashkey {
