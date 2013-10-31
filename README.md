@@ -5,7 +5,7 @@ Helios Kernel
 Helios Kernel is an open-source javascript module loader and
 dependency manager. The library itself and its module format are
 cross-compatible between the browser-based environment and
-[nodejs](http://nodejs.org/). Therefore it is possible to run the same
+[Node.js](http://nodejs.org/). Therefore it is possible to run the same
 code without any conversion in both environments. Helios Kernel tracks
 the dependency graph and can load and unload corresponding modules
 dynamically in the runtime according to the needs of different and
@@ -35,7 +35,7 @@ include("../path/to/anotherLibrary.js");
 
 init = function() {
     // module code,
-    // at this point the dependencies are loaded and ready to use
+    // objects declared in the included modules are available at this point
     myLibrary.sayHello();
 }
 ```
@@ -91,7 +91,7 @@ growth.
 To solve this problem, several script loading approaches and libraries
 exist, one of which is Helios Kernel. This library may be preferred in
 case when there is a need to create an application which will be
-compatible between web environment and nodejs without any conversion.
+compatible between web environment and Node.js without any conversion.
 One may also choose Helios Kernel because of its simplicity. Comparing
 to other approaches which seem a bit overdesigned sometimes, with
 Helios Kernel it could be more convenient to:
@@ -112,9 +112,9 @@ by wrapping its code with an `init()` function declaration.
 
 
 
-### How can Kernel be useful for nodejs applications
+### How can Kernel be useful for Node.js applications
 
-In nodejs there is a native dependency declaration technique — the
+In Node.js there is a native dependency declaration technique — the
 `require()` function which implements the specifications suggested by
 [CommonJS](http://en.wikipedia.org/wiki/CommonJS) group.
 
@@ -157,7 +157,7 @@ alternative to the CommonJS specifications.
   an `init()` function declaration
 
 - And of course, since the library and the module format are
-  cross-compatible both in browser environment, and in nodejs, you may
+  cross-compatible both in browser environment, and in Node.js, you may
   also run the same code in a browser without any conversion
 
 
@@ -168,7 +168,7 @@ alternative to the CommonJS specifications.
 [here](https://github.com/asvd/helios-kernel/releases/download/v0.9.5/helios-kernel-0.9.5.tar.gz)
 and unpack it somwhere, i.e. in `helios-kernel/` directory. You may
 also use [npm](https://npmjs.org/) to install Helios Kernel under
-nodejs:
+Node.js:
 
 ```sh
 $ npm install helios-kernel
@@ -203,9 +203,9 @@ content:
 </script>
 ```
 
-- Create the nodejs starting point which will load Helios Kernel
+- Create the Node.js starting point which will load Helios Kernel
 library, and then require the project initial script. Starting point
-for nodejs could be for instance `nodestart.js` with the following
+for Node.js could be for instance `nodestart.js` with the following
 content:
 
 ```js
@@ -224,7 +224,7 @@ kernel.require( __dirname + '/main.js');
 - To launch the application under web-browser, load the newly created
 `index.html`, or set the project directory as a web-server root. To
 start the application under node, launch the newly created
-`nodestart.js` using nodejs:
+`nodestart.js` using Node.js:
 
 ```sh
 $ nodejs nodestart.js
@@ -236,7 +236,7 @@ $ nodejs nodestart.js
 
 - Download the Helios Kernel distribution
 [here](https://github.com/asvd/helios-kernel/releases/download/v0.9.5/helios-kernel-0.9.5.tar.gz)
-and unpack it somwhere. For nodejs you may also use npm to install
+and unpack it somwhere. For Node.js you may also use npm to install
 Helios Kernel:
 
 ```sh
@@ -246,7 +246,7 @@ $ npm install helios-kernel
 - Load the Helios Kernel library script `kernel.js` in the
 distribution using any technique suitable for your
 project/environment. For a browser-based environment you could add a
-`<script>` tag to the head of HTML-document. For nodejs you
+`<script>` tag to the head of HTML-document. For Node.js you
 could use node's `require()` function to load Helios Kernel (see
 examples in the previous section).
 
@@ -438,7 +438,7 @@ library.
 
 For the libraries using some kind of export object, the whole code
 should also be wrapped with the `init()` function, and the export
-object should be declared globally. For instance, a nodejs module
+object should be declared globally. For instance, a Node.js module
 usually looks like this:
 
 ```js
