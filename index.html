@@ -33,35 +33,31 @@
         <a href="https://github.com/asvd/helios-kernel">https://github.com/asvd/helios-kernel</a>
       </p>
 <p>
-Helios Kernel is an open-source javascript module loader and
-dependency manager. The library itself and its module format are
-cross-compatible between the browser-based environment and
-<a href="http://nodejs.org/">Node.js</a>. Therefore it is possible to
-run the same code without any conversion in both environments. Helios
-Kernel tracks the dependency graph and can load and unload
-corresponding modules dynamically in the runtime according to the
-needs of different and independent parts of an application. It is
+Helios Kernel is a javascript module loader and dependency manager
+with a simple module format compatible between browser-based
+environment and <a href="http://nodejs.org/">Node.js</a> without any
+conversion. Helios Kernel tracks the dependency graph, loads and
+unloads corresponding modules dynamically in the runtime according to
+the needs of different and independent parts of an application. It is
 smart enough to start initializing the modules which are ready for
 that, while others are still being downloaded or parsed, and to handle
 some tricky problems such as circular dependencies or broken code
 (reporting the problem, but still keeping the application alive). But
-the key feature of the Helios Kernel is
+the key feature of Helios Kernel is
 </p>
-
 
 <h2>Simplicity</h2>
 
 <p>
-Helios Kernel follows
+Following
 the <a href="http://en.wikipedia.org/wiki/KISS_principle">KISS
-principle</a>, which means that it only contains the necessary
-features intended to make dependency management simple and flexible.
+principle</a>, Helios Kernel contains the necessary features intended
+to make dependency management easy and flexible.
 </p>
 
 <p>
-Dependency declaration is implemented in the classic
-inculde-style. This is an example of a module which includes and
-reuses some dependencies:
+Syntax of a module and dependency declaration is simple and
+straightforward, it is implimented in a classic include-style:
 </p>
 
 <pre name="code" class="js">// list of dependencies
@@ -76,19 +72,19 @@ init = function() {
 </pre>
 
 <p>
-In the head of a module, a set of dependencies are listed using the
-<span class=inline_code>include()</span> function. Each call of this
-function stands for a single dependency. The code inside
-the <span class=inline_code>init()</span> function declaration is a
-module code. It will be issued by Helios Kernel as soon as all
-dependencies included at the module head are loaded.
+A set of dependencies is listed in the module head using the
+<span class=inline_code>include()</span> function, each call stands
+for a single dependency.  The only argument is the exact path to the
+source of the needed module &mdash; so that it is always easy to find out
+the particular dependency source locaiton.
 </p>
 
+
 <p>
-The only argument of the <span class=inline_code>include()</span>
-function is the exact path to the module which should be loaded
-beforehand &mdash; so that it is always easy to find out the
-particular dependency source locaiton.
+Module code is located inisde
+the <span class=inline_code>init()</span> function declaration.  It
+will be issued by Helios Kernel as soon as all dependencies are
+loaded.
 </p>
 
 <p>
