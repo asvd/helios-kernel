@@ -2,31 +2,28 @@
 Helios Kernel
 =============
 
-Helios Kernel is an open-source javascript module loader and
-dependency manager. The library itself and its module format are
-cross-compatible between the browser-based environment and
-[Node.js](http://nodejs.org/). Therefore it is possible to run the same
-code without any conversion in both environments. Helios Kernel tracks
-the dependency graph and can load and unload corresponding modules
-dynamically in the runtime according to the needs of different and
-independent parts of an application. It is smart enough to start
-initializing the modules which are ready for that, while others are
-still being downloaded or parsed, and to handle some tricky problems
-such as circular dependencies or broken code (reporting the problem,
-but still keeping the application alive). But the key feature of the
-Helios Kernel is
+Helios Kernel is a javascript module loader and dependency manager
+with a simple module format compatible between browser-based
+environment and [Node.js](http://nodejs.org/) without any
+conversion. Helios Kernel tracks the dependency graph, loads and
+unloads corresponding modules dynamically in the runtime according to
+the needs of different and independent parts of an application. It is
+smart enough to start initializing the modules which are ready for
+that, while others are still being downloaded or parsed, and to handle
+some tricky problems such as circular dependencies or broken code
+(reporting the problem, but still keeping the application alive). But
+the key feature of Helios Kernel is
 
 
 ### Simplicity
 
-Helios Kernel follows the [KISS
-principle](http://en.wikipedia.org/wiki/KISS_principle), which means
-that it only contains the necessary features intended to make
-dependency management simple and flexible.
+Following the [KISS
+principle](http://en.wikipedia.org/wiki/KISS_principle), Helios Kernel
+contains the necessary features intended to make dependency management
+easy and flexible.
 
-Dependency declaration is implemented in the classic
-inculde-style. This is an example of a module which includes and
-reuses some dependencies:
+Syntax of a module and dependency declaration is simple and
+straightforward, it is implimented in a classic include-style:
 
 ```js
 // list of dependencies
@@ -40,15 +37,15 @@ init = function() {
 }
 ```
 
-In the head of a module, a set of dependencies are listed using the
-`include()` function. Each call of this function stands for a single
-dependency. The code inside the `init()` function declaration is a
-module code. It will be issued by Helios Kernel as soon as all
-dependencies included at the module head are loaded.
+A set of dependencies is listed in the module head using the
+`include()` function, each call stands for a single dependency.  The
+only argument is the exact path to the source of the needed module —
+so that it is always easy to find out the particular dependency source
+locaiton.
 
-The only argument of the `include()` function is the exact path to the
-module which should be loaded beforehand — so that it is always easy
-to find out the particular dependency source locaiton.
+Module code is located inisde the `init()` function declaration.  It
+will be issued by Helios Kernel as soon as all dependencies are
+loaded.
 
 This is how `myLibrary.js` included in the module above could look:
 
