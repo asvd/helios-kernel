@@ -469,3 +469,7 @@ init = function() {
 After this module is loaded, its routines should be refered as
 `someLibrary.someObject`.
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/asvd/helios-kernel/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
