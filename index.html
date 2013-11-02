@@ -34,16 +34,16 @@
       </p>
 <p>
 Helios Kernel is a javascript module loader and dependency manager
-with a simple module format compatible between browser-based
-environment and <a href="http://nodejs.org/">Node.js</a> without any
-conversion. Helios Kernel tracks the dependency graph, loads and
-unloads corresponding modules dynamically in the runtime according to
-the needs of different and independent parts of an application. It is
-smart enough to start initializing the modules which are ready for
-that, while others are still being downloaded or parsed, and to handle
-some tricky problems such as circular dependencies or broken code
-(reporting the problem, but still keeping the application alive). But
-the key feature of Helios Kernel is
+with a simple module format which is cross-compatible between the
+browser-based environment and <a href="http://nodejs.org/">Node.js</a>
+without any conversion. Helios Kernel tracks the dependency graph,
+loads and unloads corresponding modules dynamically in the runtime
+according to the needs of different and independent parts of an
+application. It is smart enough to start initializing the modules
+which are ready for that, while others are still being downloaded or
+parsed, and to handle some tricky problems such as circular
+dependencies or broken code (reporting the problem, but still keeping
+the application alive). But the key feature of Helios Kernel is
 </p>
 
 <h2>Simplicity</h2>
@@ -51,18 +51,15 @@ the key feature of Helios Kernel is
 <p>
 Following
 the <a href="http://en.wikipedia.org/wiki/KISS_principle">KISS
-principle</a>, Helios Kernel contains the necessary features intended
-to make dependency management easy and flexible.
-</p>
-
-<p>
-Syntax of a module and dependency declaration is simple and
-straightforward, it is implimented in a classic include-style:
+principle</a>, Helios Kernel provides the necessary features intended
+to make dependency management simple and straightforward. Syntax of a
+module and dependency declaration is implimented in the classic
+include-style:
 </p>
 
 <pre name="code" class="js">// list of dependencies
-include("path/to/myLibrary.js");
-include("../path/to/anotherLibrary.js");
+include('path/to/myLibrary.js');
+include('../path/to/anotherLibrary.js');
 
 init = function() {
     // module code,
@@ -73,10 +70,10 @@ init = function() {
 
 <p>
 A set of dependencies is listed in the module head using the
-<span class=inline_code>include()</span> function, each call stands
-for a single dependency.  The only argument is the exact path to the
-source of the needed module &mdash; so that it is always easy to find out
-the particular dependency source locaiton.
+<span class=inline_code>include()</span> function, where each call
+stands for a single dependency.  The only argument is the exact path
+to the source of the needed module &mdash; so that it is always easy to find
+out the particular dependency source locaiton.
 </p>
 
 
@@ -98,7 +95,7 @@ the module above could look:
 
     // library method
     myLibrary.sayHello = function() {
-        console.log("Hello World!");
+        console.log('Hello World!');
     }
 }
 </pre>
@@ -107,174 +104,99 @@ the module above could look:
 <span class=inline_code></span>
 
 <p>
-In this example, the <span class=inline_code>init()</span> function
-declares a global object. This way of exproting data is considered
-unsafe sometimes, since it could lead to data collision.  But in this
-text such approach is used because of its simplicity. Helios Kernel
-does not force a specific way of exporting:
-<span class=inline_code>init()</span> function may contain any code
-you prefer. Particulary it could declare a factory function safely
-returning a library object. (But if you only need to keep some private
-module data, you may use the <span class=inline_code>init()</span>
-function scope)
+Helios Kernel does not force following a specific way of exporting:
+<span class=inline_code>init()</span> function may contain any
+preferred code. Particulary it may declare a factory function safely
+returning the library object. (But if you only need to keep some
+private module data, you may use
+the <span class=inline_code>init()</span> function scope)
 </p>
 
 <p>
 This is basicly everything you need to know to start using Helios
-Kernel for setting-up dependencies in your project.
+Kernel for setting-up the dependencies in your project.
 </p>
 
 <p>
 This text contains the full documentation on Helios Kernel.
 </p>
 
-<h2>How can Kernel be useful for browser-based applications</h2>
+<h2>Helios Kernel comparing to other approaches</h2>
 
 <p>
-In the browser environments there is no native dependency management
-solution. To ensure that a set of javascript-libraries is loaded, the
-libraries are usually listed within a single html-page
+There is no native dependency management solution in browser
+environments. To ensure that a set of javascript-libraries is loaded,
+the libraries are usually listed within a single html-page
 header. Managing the dependencies and loading order is too tricky in
 this case, and gets more and more complicated along with the project
-growth.
+growth. To solve this problem, several script loading approaches and
+libraries exist, one of which is Helios Kernel.
 </p>
-
-<p>
-To solve this problem, several script loading approaches and libraries
-exist, one of which is Helios Kernel. This library may be preferred in
-case when there is a need to create an application which will be
-compatible between web environment and Node.js without any conversion.
-One may also choose Helios Kernel because of its simplicity. Comparing
-to other approaches which seem a bit overdesigned sometimes, with
-Helios Kernel it could be more convenient to:
-</p>
-
-<ul>
-  <li>
-modify or refactor a list of dependencies, especially when are a lot
-of them (each dependency is just a
-single <span class=inline_code>include()</span> line at the module
-head)
-  </li>
-  <li>
-create a compound module which should load several modules used at
-once (in Helios Kernel such module could simply list all dependencies
-using <span class=inline_code>include()</span>, without the need to
-transfer other modules' routines through the exported objects)
-  </li>
-  <li>
-reuse "ordinary" javascript libraries designed to be loaded using
-the <span class=inline_code>&lt;script&gt;</span> tag in a
-html-page. Helios Kernel module format is very simple, so such library
-could be easily converted to a module by wrapping its code with an
-<span class=inline_code>init()</span> function declaration.
-  </li>
-</ul>
-
-
-<h2>How can Kernel be useful for Node.js applications</h2>
 
 <p>
 In Node.js there is a native dependency declaration technique &mdash; the
 <span class=inline_code>require()</span> function which implements the
 specifications suggested by
-the <a href="http://en.wikipedia.org/wiki/CommonJS">CommonJS</a>
-group.
-</p>
-
-<p>
-Helios Kernel API pretends to be a simplier and more flexible
+<a href="http://en.wikipedia.org/wiki/CommonJS">CommonJS</a>
+group. Helios Kernel pretends to be a simplier and more flexible
 alternative to the CommonJS specifications.
 </p>
 
-<h3>What is simplier:</h3>
-
+<p>
+Helios Kernel may be preferred because of its simplicity, or if there
+is a need to to have the modules compatible between web and Node.js
+environments. Comparing to other dependency-management solutions, with
+Helios Kernel it could be more convenient to:
+</p>
 
 <ul>
   <li>
- It is easier to see and declare module's dependencies (they are
-  always listed in the module head, not inside its body, not in some
-  external config)
+modify or refactor a list of dependencies, especially when there are a
+lot of them (each dependency is just a
+single <span class=inline_code>include()</span> line referring to a
+module by its path, which is specified at the module head, not inside
+the module body or even some external config)
   </li>
-
   <li>
- There could be no 'hidden' dependencies declared in the middle of a
-  code (dynamically loading additional modules is a different use-case
-  which is performed by the <span class=inline_code>kernel.require()</span> function)
+create a compound module which should load several modules to be
+used at once (such module could simply list all dependencies using
+<span class=inline_code>include()</span>, without a need to transfer
+other modules' routines through the exported objects)
   </li>
-
   <li>
- It is easier to find out where the particular dependency source code
-  is located (dependencies are always declared by exact path)
-  </li>
-
-  <li>
- Module structure, documentation and usage are simplier (there is no
-  need to declare a special export object and reuse it in the
-  dependent modules, instead library objects are exported using the
-  global scope, and they are always referred with the same name)
-  </li>
-
-  <li>
- Circular dependencies considered as an error (which prevents
-  dependency mess-up and helps to keep everything in order)
-  </li>
-
-  <li>
- It is easier to split the library objects between the different
-  modules (since there is no export object, it is easier to create a
-  compound library module which will simply include all library
-  modules each making up some part of the library)
+reuse "ordinary" javascript libraries designed to be loaded using
+the <span class=inline_code>&lt;script&gt;</span> tag in a html-page
+(module format is very simple, and such library could be easily
+converted to a module by wrapping its code with
+an <span class=inline_code>init()</span> function declaration)
   </li>
 </ul>
 
 
 
+ <h2>How to setup a new project based on the Helios Kernel</h2>
 
-<h3>What is more flexible:</h3>
+   <ol>
+     <li>
+ Download the distribution
+ <a href="https://github.com/asvd/helios-kernel/releases/download/v0.9.5/helios-kernel-0.9.5.tar.gz">here</a>
+ and unpack it somwhere, i.e. in <span class=inline_code>helios-kernel/</span> directory. You may
+ also use <a href="https://npmjs.org/">npm</a> to install Helios Kernel under
+ Node.js:
 
-  <ul>
-    <li>
- It is possible to unload the code which is not needed anymore
-   </li>
-
-   <li>
- Any javascript library could be easily converted to the Helios
- Kernel module &mdash; in most cases its code should simply be wrapped with
- an <span class=inline_code>init()</span> function declaration
-   </li>
-
-   <li>
- Helios Kernel modules format is cross-compatible between browser and
- Node.js enviroment, therefore it is possible to create a library which
- will work unchanged under both environments (of course until there is
- some specific platform-dependent code)
+ <pre name="code" class="js">$ npm install helios-kernel
+ </pre>
     </li>
-  </ul>
 
-<h2>How to setup a new project based on the Helios Kernel</h2>
-
-  <ol>
     <li>
-Download the distribution
-<a href="https://github.com/asvd/helios-kernel/releases/download/v0.9.5/helios-kernel-0.9.5.tar.gz">here</a>
-and unpack it somwhere, i.e. in <span class=inline_code>helios-kernel/</span> directory. You may
-also use <a href="https://npmjs.org/">npm</a> to install Helios Kernel under
-Node.js:
+ Create the initial module for the project, i.e. <span class=inline_code>main.js</span> with the
+ following content:
 
-<pre name="code" class="js">$ npm install helios-kernel
-</pre>
-   </li>
-
-   <li>
-Create the initial module for the project, i.e. <span class=inline_code>main.js</span> with the
-following content:
-
-<pre name="code" class="js">// include the needed libraries here
+ <pre name="code" class="js">// include the needed libraries here
 
 init = function() {
-    // start your application code here
-    console.log('hello world!');
+     // start your application code here
+    console.log('Hello world!');
 }
 </pre>
 
@@ -287,7 +209,8 @@ head
    <li>
 Create the web-based starting point which will load Helios Kernel
 source, and then require the project initial script. Web-based
-starting point could be for instance <span class=inline_code>index.html</span> with the following
+starting point could be for instance
+an <span class=inline_code>index.html</span> with the following
 content:
 
 <pre name="code" class="html">&lt;script src="helios-kernel/kernel.js"&gt;&lt;/script&gt;
@@ -343,9 +266,10 @@ Helios Kernel:
     </li>
 
     <li>
-      Load the Helios Kernel library script <span class=inline_code>kernel.js</span> in the
-distribution using any technique suitable for your
-project/environment. For a browser-based environment you could add a
+Load the Helios Kernel library
+script <span class=inline_code>kernel.js</span> from the distribution
+using any technique suitable for your project/environment. For a
+browser-based environment you could add a
 <span class=inline_code>&lt;script&gt;</span> tag to the head of HTML-document. For Node.js you could use
 node's <span class=inline_code>require()</span> function to load Helios Kernel (see examples
 in the previous section).
@@ -361,83 +285,71 @@ any Kernel-compatible library.
 <h2>How to create a Helios Kernel module</h2>
 
 <p>
-A module code should be located inside
-the <span class=inline_code>init()</span> function body which is
-declared globally for each module. Above that function, a set of
-dependencies are listed using
-the <span class=inline_code>include()</span> function. Inside
-the <span class=inline_code>init()</span> function, global objects
-could be declared. These are the objects provided by the module to
-other modules which include this module as a dependency.
+Module structure is explained in the first section of this
+text. Basicly a module consists of the two parts: the list of
+dependencies in the module head using
+the <span class=inline_code>include()</span> function, and the module
+code inside the <span class=inline_code>init()</span> function
+declaration:
 </p>
 
-<p>
-For instance, you could have a
-module <span class=inline_code>library.js</span> providing a library
-function to any module which will include it:
-</p>
+<pre name="code" class="js">// list of dependencies
+include('path/to/myLibrary.js');
+include('../path/to/anotherLibrary.js');
 
-<pre name="code" class="js">// library.js module initializer
 init = function() {
-    // global object containing the library routines
-    myLibrary = {};
-
-    // function provided by the library
-    myLibrary.doSomething = function() {
-        console.log('hello');
-    }
+    // module code,
+    // objects declared in the included modules are available at this point
+    myLibrary.sayHello();
 }
 </pre>
 
 <p>
-And this is how a module using that library should look like:
+The simpliest approach to make the module data available to other
+modules, is to (globaly) declare the needed objects.
 </p>
-
-<pre name="code" class="js">include("path/to/library.js");
-
-init = function() {
-    // library is loaded and we can use it at this point
-    myLibrary.doSomething();  // will print 'hello'
-}
-</pre>
 
 <h2>Dynamical module loading</h2>
 
 <p>
-To load a module in the runtime, use <span class=inline_code>kernel.require()</span> function. It
-takes three arguments &mdash; absolute path of the module, and two callbacks
-&mdash; for a success and for a failure.
+To load a module in the runtime,
+use <span class=inline_code>kernel.require()</span> function. It takes
+three arguments &mdash; absolute path of the module, and the two
+callbacks &mdash; for a success and for a failure.
 </p>
 
 <p>
 Unlike <span class=inline_code>include()</span> which is used for declaring a dependency in a
 module head, and is mostly intended to work with relative paths,
-<span class=inline_code>kernel.require()</span> only accepts specifying the absolute path. For a
-web environment you may start it with the slash <span class=inline_code>/</span> which will stand
-for the domain root. To load a romete module, provide the full URL
-starting with a protocol (<span class=inline_code>http://...</span>). You may also provide an array
-of paths to load several modules at once.
+<span class=inline_code>kernel.require()</span> only accepts
+specifying the absolute path. For a web environment you may start it
+with the slash <span class=inline_code>/</span> which will stand for
+the domain root. To load a romete module, provide the full URL
+starting with a protocol
+(<span class=inline_code>http://...</span>). You may also provide an
+array of paths to load several modules at once.
 </p>
 
 <p>
 Second argument, the success callback, is a function which is called
 after all demanded modules and their dependencies are successfully
-loaded and initialized. Inside that callback you may start using the
+loaded and initialized. Inside this callback you may start using the
 objects provided by the requested modules.
 </p>
 
 <p>
 Third argument is a failure callback which will be called in case if
-some of the requested modules (or their dependency) has failed to be
-loaded. Reasons could be very different (from syntax error and to
-network problems), therefore you must implement some reasonable
-fallback or cancellation behaviour for the loading failure.
+some of the requested modules (or their dependencies) has failed to be
+loaded. Reasons could be very different (from syntax error to network
+problems), therefore you must implement some reasonable fallback or
+cancellation behaviour for the loading failure.
 </p>
 
 <p>
-The returned value of <span class=inline_code>kernel.require()</span> is a reservation ticket, a
-special object corresponding to the single <span class=inline_code>require()</span> act. You will
-need the ticket to unload requested modules in the future when you
+The returned value of <span class=inline_code>kernel.require()</span>
+is a reservation ticket, a special object corresponding to a
+single <span class=inline_code>require()</span> act. You will need the
+ticket if you wish to unload requested modules in the future when you
 don't need them anymore.
 </p>
 
@@ -469,34 +381,34 @@ the ticket by calling <span class=inline_code>kernel.release()</span> function:
 </pre>
 
 <p>
-This will not make the Kernel unload the module immediately, instead
-the Kernel will know that the module is not needed anymore at the area
-related to the given ticket, and will unload the module after it will
-be released everywhere else.
+This will not make the Kernel to unload the related modules
+immediately, instead the Kernel will know that they are not needed
+anymore at the area related to the given ticket, and will unload the
+modules after they will be released everywhere else.
 </p>
 
 <h2>Module uninitializer</h2>
 
 <p>
 Upon the module unload, its code is removed from the Kernel module
-cache. But the Kernel does not track the objects created by the
-module's initializer, therefore you may provide an uninitializer
-function which should remove the library objects. This function will
-be called during the module unload.
+cache. But Kernel does not track the objects created by the module's
+initializer, therefore you may provide an uninitializer function which
+would remove the library objects. This function will be called during
+the module unload.
 </p>
 
 <p>
-Therefore the full version of a library module will look like this:
+Therefore the full version of a library module could look like this:
 </p>
 
 <pre name="code" class="js">// module initializer
 init = function() {
-    // global object containing the library routines
+    // (globally) declaring a library object
     myLibrary = {};
 
-    // function provided by the library
-    myLibrary.doSomething = function() {
-        console.log('hello');
+    // library method
+    myLibrary.sayHello = function() {
+        console.log('Hello World!');
     }
 }
 
@@ -510,23 +422,24 @@ uninit = function() {
 </pre>
 
 <p>
-If a module initializer declares a single compound object containing
-all the library routines inside (the recommended
-way, <span class=inline_code>myLibrary</span> in the example above),
-simply clearing that object should be enough, garbage collector should
+If a module initializer declares a single compound object
+incapsulating all the library routines (the recommended way,
+<span class=inline_code>myLibrary</span> in the example above), simply
+clearing that object should be enough, garbage collector should
 (hopely) do the rest.
 </p>
+
 
 <h2>How to convert existing javascript library to Kernel module</h2>
 
 <p>
 If you have a library of any format, it usually defines a set of
-routines which should be later used from outside. In most of the
+routines which should be used from the outside later. In most of the
 web-libraries which are intednded to be included using
 the <span class=inline_code>&lt;script&gt;</span> tag, a set of global
-objects are simply defined. In this case it should be enough to wrap
-the library code with the <span class=inline_code>init()</span>
-function declaration. So if the original source was like this:
+objects is defined. In this case it should be enough to wrap the
+library code with the <span class=inline_code>init()</span> function
+declaration. So if the original source was like this:
 </p>
 
 <pre name="code" class="js">libraryObject = {
@@ -555,8 +468,8 @@ then it should be remade like this:
 
 <p>
 Now this is a Helios Kernel compatible module, and could be loaded
-using <span class=inline_code>include()</span> function. If you load
-this module, the code of
+using the <span class=inline_code>include()</span> function. If you
+load this module, the code of
 library's <span class=inline_code>init()</span> function will be
 issued and initialize the objects before
 the <span class=inline_code>init()</span> function code of the module
@@ -566,8 +479,8 @@ which requested the library.
 <p>
 For the libraries using some kind of export object, the whole code
 should also be wrapped with the <span class=inline_code>init()</span>
-function, and the export object should be declared globally. For
-instance, a Node.js module usually looks like this:
+function. To make the exported objects, they could be globally
+redeclare. For instance, a CommonJS module could looks like this:
 </p>
 
 <pre name="code" class="js">this.someObject = {
@@ -598,7 +511,7 @@ To be converted to the Helios module, it should be remade like this:
 </pre>
 
 <p>
-After this module is loaded, its routines should be refered as
+After this module is loaded, its routines could be refered as
 <span class=inline_code>someLibrary.someObject</span>.
 </p>
 
