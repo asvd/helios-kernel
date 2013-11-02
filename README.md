@@ -3,9 +3,9 @@ Helios Kernel
 =============
 
 Helios Kernel is a javascript module loader and dependency manager
-with a simple module format compatible between browser-based
-environment and [Node.js](http://nodejs.org/) without any
-conversion. Helios Kernel tracks the dependency graph, loads and
+with a simple module format which is cross-compatible between the
+browser-based environment and [Node.js](http://nodejs.org/) without
+any conversion. Helios Kernel tracks the dependency graph, loads and
 unloads corresponding modules dynamically in the runtime according to
 the needs of different and independent parts of an application. It is
 smart enough to start initializing the modules which are ready for
@@ -19,16 +19,14 @@ the key feature of Helios Kernel is
 
 Following the [KISS
 principle](http://en.wikipedia.org/wiki/KISS_principle), Helios Kernel
-contains the necessary features intended to make dependency management
-easy and flexible.
-
-Syntax of a module and dependency declaration is simple and
-straightforward, it is implimented in a classic include-style:
+provides the necessary features intended to make dependency management
+simple and straightforward. Syntax of a module and dependency
+declaration is implimented in the classic include-style:
 
 ```js
 // list of dependencies
-include("path/to/myLibrary.js");
-include("../path/to/anotherLibrary.js");
+include('path/to/myLibrary.js');
+include('../path/to/anotherLibrary.js');
 
 init = function() {
     // module code,
@@ -38,10 +36,10 @@ init = function() {
 ```
 
 A set of dependencies is listed in the module head using the
-`include()` function, each call stands for a single dependency.  The
-only argument is the exact path to the source of the needed module —
-so that it is always easy to find out the particular dependency source
-locaiton.
+`include()` function, where each call stands for a single dependency.
+The only argument is the exact path to the source of the needed module
+— so that it is always easy to find out the particular dependency
+source locaiton.
 
 Module code is located inisde the `init()` function declaration.  It
 will be issued by Helios Kernel as soon as all dependencies are
@@ -56,107 +54,58 @@ init = function() {
 
     // library method
     myLibrary.sayHello = function() {
-        console.log("Hello World!");
+        console.log('Hello World!');
     }
 }
 ```
 
-In this example, the `init()` function declares a global object. This
-way of exproting data is considered unsafe sometimes, since it could
-lead to data collision.  But in this text such approach is used
-because of its simplicity. Helios Kernel does not force a specific way
-of exporting: `init()` function may contain any code you
-prefer. Particulary it could declare a factory function safely
-returning a library object. (But if you only need to keep some private
-module data, you may use the `init()` function scope)
+Helios Kernel does not force following a specific way of exporting:
+`init()` function may contain any preferred code. Particulary it may
+declare a factory function safely returning the library object. (But
+if you only need to keep some private module data, you may use the
+`init()` function scope)
 
 This is basicly everything you need to know to start using Helios
-Kernel for setting-up dependencies in your project.
+Kernel for setting-up the dependencies in your project.
 
 This text contains the full documentation on Helios Kernel.
 
 
-### How can Kernel be useful for browser-based applications
+### Helios Kernel comparing to other approaches
 
-In the browser environments there is no native dependency management
-solution. To ensure that a set of javascript-libraries is loaded, the
-libraries are usually listed within a single html-page
+There is no native dependency management solution in browser
+environments. To ensure that a set of javascript-libraries is loaded,
+the libraries are usually listed within a single html-page
 header. Managing the dependencies and loading order is too tricky in
 this case, and gets more and more complicated along with the project
-growth.
-
-To solve this problem, several script loading approaches and libraries
-exist, one of which is Helios Kernel. This library may be preferred in
-case when there is a need to create an application which will be
-compatible between web environment and Node.js without any conversion.
-One may also choose Helios Kernel because of its simplicity. Comparing
-to other approaches which seem a bit overdesigned sometimes, with
-Helios Kernel it could be more convenient to:
-
-- modify or refactor a list of dependencies, especially when are a lot
-of them (each dependency is just a single `include()` line at the
-module head)
-
-- create a compound module which should load several modules used at
-once (in Helios Kernel such module could simply list all dependencies
-using `include()`, without the need to transfer other modules'
-routines through the exported objects)
-
-- reuse "ordinary" javascript libraries designed to be loaded using
-the `<script>` tag in a html-page. Helios Kernel module format
-is very simple, so such library could be easily converted to a module
-by wrapping its code with an `init()` function declaration.
-
-
-
-### How can Kernel be useful for Node.js applications
+growth. To solve this problem, several script loading approaches and
+libraries exist, one of which is Helios Kernel.
 
 In Node.js there is a native dependency declaration technique — the
 `require()` function which implements the specifications suggested by
-[CommonJS](http://en.wikipedia.org/wiki/CommonJS) group.
+[CommonJS](http://en.wikipedia.org/wiki/CommonJS) group. Helios Kernel
+pretends to be a simplier and more flexible alternative to the
+CommonJS specifications.
 
-Helios Kernel API pretends to be a simplier and more flexible
-alternative to the CommonJS specifications.
+Helios Kernel may be preferred because of its simplicity, or if there
+is a need to to have the modules compatible between web and Node.js
+environments. Comparing to other dependency-management solutions, with
+Helios Kernel it could be more convenient to:
 
-#### What is simplier:
+- modify or refactor a list of dependencies, especially when there are
+a lot of them (each dependency is just a single `include()` line
+referring to a module by its path, which is specified at the module
+head, not inside the module body or even some external config)
 
-- It is easier to see and declare module's dependencies (they are
-  always listed in the module head, not inside its body, not in some
-  external config)
+- create a compound module which should load several modules to be
+used at once (such module could simply list all dependencies using
+`include()`, without a need to transfer other modules' routines
+through the exported objects)
 
-- There could be no 'hidden' dependencies declared in the middle of a
-  code (dynamically loading additional modules is a different use-case
-  which is performed by the `kernel.require()` function)
-
-- It is easier to find out where the particular dependency source code
-  is located (dependencies are always declared by exact path)
-
-- Module structure, documentation and usage are simplier (there is no
-  need to declare a special export object and reuse it in the
-  dependent modules, instead library objects are exported using the
-  global scope, and they are always referred with the same name)
-
-- Circular dependencies considered as an error (which prevents
-  dependency mess-up and helps to keep everything in order)
-
-- It is easier to split the library objects between the different
-  modules (since there is no export object, it is easier to create a
-  compound library module which will simply include all library
-  modules each making up some part of the library)
-
-
-#### What is more flexible:
-
-- It is possible to unload the code which is not needed anymore
-
-- Any javascript library could be easily converted to the Helios
-  Kernel module — in most cases its code should simply be wrapped with
-  an `init()` function declaration
-
-- And of course, since the library and the module format are
-  cross-compatible both in browser environment, and in Node.js, you may
-  also run the same code in a browser without any conversion
-
+- reuse "ordinary" javascript libraries designed to be loaded using
+the `<script>` tag in a html-page (module format is very simple, and
+such library could be easily converted to a module by wrapping its
+code with an `init()` function declaration)
 
 
 ### How to setup a new project based on the Helios Kernel
@@ -179,7 +128,7 @@ following content:
 
 init = function() {
     // start your application code here
-    console.log('hello world!');
+    console.log('Hello world!');
 }
 ```
 
@@ -188,8 +137,8 @@ module head
 
 - Create the web-based starting point which will load Helios Kernel
 source, and then require the project initial script. Web-based
-starting point could be for instance `index.html` with the following
-content:
+starting point could be for instance an `index.html` with the
+following content:
 
 ```html
 <script src="helios-kernel/kernel.js"></script>
@@ -228,7 +177,6 @@ $ nodejs nodestart.js
 ```
 
 
-
 ### How to use Kernel-compatible modules with an existing project
 
 - Download the Helios Kernel distribution
@@ -240,62 +188,45 @@ Helios Kernel:
 $ npm install helios-kernel
 ```
 
-- Load the Helios Kernel library script `kernel.js` in the
+- Load the Helios Kernel library script `kernel.js` from the
 distribution using any technique suitable for your
 project/environment. For a browser-based environment you could add a
-`<script>` tag to the head of HTML-document. For Node.js you
-could use node's `require()` function to load Helios Kernel (see
-examples in the previous section).
+`<script>` tag to the head of HTML-document. For Node.js you could use
+node's `require()` function to load Helios Kernel (see examples in the
+previous section).
 
 - After the Helios Kernel is loaded, you may use `kernel.require()`
 function to load any Kernel-compatible library.
 
 
-
 ### How to create a Helios Kernel module
 
-A module code should be located inside the `init()` function body which
-is declared globally for each module. Above that function, a set of
-dependencies are listed using the `include()` function. Inside the `init()`
-function, global objects could be declared. These are the objects
-provided by the module to other modules which include this module as a
-dependency.
-
-For instance, you could have a module `library.js` providing a library
-function to any module which will include it:
+Module structure is explained in the first section of this
+text. Basicly a module consists of the two parts: the list of
+dependencies in the module head using the `inculde()` function, and
+the module code inside the `init()` function declaration:
 
 ```js
-// library.js module initializer
-init = function() {
-    // global object containing the library routines
-    myLibrary = {};
+// list of dependencies
+include('path/to/myLibrary.js');
+include('../path/to/anotherLibrary.js');
 
-    // function provided by the library
-    myLibrary.doSomething = function() {
-        console.log('hello');
-    }
+init = function() {
+    // module code,
+    // objects declared in the included modules are available at this point
+    myLibrary.sayHello();
 }
 ```
 
-
-And this is how a module using that library should look like:
-
-```js
-include("path/to/library.js");
-
-init = function() {
-    // library is loaded and we can use it at this point
-    myLibrary.doSomething();  // will print 'hello'
-}
-```
-
+The simpliest approach to make the module data available to other
+modules, is to (globaly) declare the needed objects.
 
 
 ### Dynamical module loading
 
 To load a module in the runtime, use `kernel.require()` function. It
-takes three arguments — absolute path of the module, and two callbacks —
-for a success and for a failure.
+takes three arguments — absolute path of the module, and the two
+callbacks — for a success and for a failure.
 
 Unlike `include()` which is used for declaring a dependency in a
 module head, and is mostly intended to work with relative paths,
@@ -307,19 +238,19 @@ of paths to load several modules at once.
 
 Second argument, the success callback, is a function which is called
 after all demanded modules and their dependencies are successfully
-loaded and initialized. Inside that callback you may start using the
+loaded and initialized. Inside this callback you may start using the
 objects provided by the requested modules.
 
 Third argument is a failure callback which will be called in case if
-some of the requested modules (or their dependency) has failed to be
-loaded. Reasons could be very different (from syntax error and to
-network problems), therefore you must implement some reasonable
-fallback or cancellation behaviour for the loading failure.
+some of the requested modules (or their dependencies has failed to be
+loaded. Reasons could be very different (from syntax error to network
+problems), therefore you must implement some reasonable fallback or
+cancellation behaviour for the loading failure.
 
 The returned value of `kernel.require()` is a reservation ticket, a
-special object corresponding to the single `require()` act. You will
-need the ticket to unload requested modules in the future when you
-don't need them anymore.
+special object corresponding to a single `require()` act. You will
+need the ticket if you wish to unload requested modules in the future
+when you don't need them anymore.
 
 Therefore, dynamically loading a module looks like this:
 
@@ -347,32 +278,31 @@ the ticket by calling `kernel.release()` function:
 kernel.release(ticket);
 ```
 
-This will not make the Kernel unload the module immediately, instead
-the Kernel will know that the module is not needed anymore at the area
-related to the given ticket, and will unload the module after it will
-be released everywhere else.
-
+This will not make the Kernel to unload the related modules
+immediately, instead the Kernel will know that they are not needed
+anymore at the area related to the given ticket, and will unload the
+modules after they will be released everywhere else.
 
 
 ### Module uninitializer
 
 Upon the module unload, its code is removed from the Kernel cache. But
-the Kernel does not track the objects created by the module's
-initializer, therefore you may provide an uninitializer function which
-should remove the library objects. This function will be called during
-the module unload.
+Kernel does not track the objects created by the module's initializer,
+therefore you may provide an uninitializer function which would remove
+the library objects. This function will be called during the module
+unload.
 
-Therefore the full version of a library module will look like this:
+Therefore the full version of a library module could look like this:
 
 ```js
 // module initializer
 init = function() {
-    // global object containing the library routines
+    // (globally) declaring a library object
     myLibrary = {};
 
-    // function provided by the library
-    myLibrary.doSomething = function() {
-        console.log('hello');
+    // library method
+    myLibrary.sayHello = function() {
+        console.log('Hello World!');
     }
 }
 
@@ -385,22 +315,20 @@ uninit = function() {
 }
 ```
 
-If a module initializer declares a single compound object containing
-all the library routines inside (the recommended way, `myLibrary` in
-the example above), simply clearing that object should be enough,
-garbage collector should (hopely) do the rest.
-
+If a module initializer declares a single compound object
+incapsulating all the library routines (the recommended way,
+`myLibrary` in the example above), simply clearing that object should
+be enough, garbage collector should (hopely) do the rest.
 
 
 ### How to convert existing javascript library to Kernel module
 
 If you have a library of any format, it usually defines a set of
-routines which should be later used from outside. In most of the
-web-libraries which are intednded to be included using the
-`<script>` tag, a set of global objects are simply defined. In
-this case it should be enough to wrap the library code with the
-`init()` function declaration. So if the original source was like
-this:
+routines which should be used from the outside later. In most of the
+web-libraries which are intednded to be included using the `<script>`
+tag, a set of global objects is defined. In this case it should be
+enough to wrap the library code with the `init()` function
+declaration. So if the original source was like this:
 
 ```js
 libraryObject = {
@@ -426,17 +354,16 @@ init = function() {
 }
 ```
 
-
 Now this is a Helios Kernel compatible module, and could be loaded
-using `include()` function. If you load this module, the code of
+using the `include()` function. If you load this module, the code of
 library's `init()` function will be issued and initialize the objects
 before the `init()` function code of the module which requested the
 library.
 
 For the libraries using some kind of export object, the whole code
-should also be wrapped with the `init()` function, and the export
-object should be declared globally. For instance, a Node.js module
-usually looks like this:
+should also be wrapped with the `init()` function. To make the
+exported objects, they could be globally redeclare. For instance, a
+CommonJS module could looks like this:
 
 ```js
 this.someObject = {
@@ -447,7 +374,6 @@ this.someFunction = function() {
    ...
 };
 ```
-
 
 To be converted to the Helios module, it should be remade like this:
 
@@ -466,7 +392,7 @@ init = function() {
 }
 ```
 
-After this module is loaded, its routines should be refered as
+After this module is loaded, its routines could be refered as
 `someLibrary.someObject`.
 
 
