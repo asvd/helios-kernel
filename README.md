@@ -1,6 +1,6 @@
 
-Helios Kernel
-=============
+Helios Kernel - inculde() for javascript
+========================================
 
 Helios Kernel is a javascript module loader and dependency manager
 with a simple module format which is cross-compatible between the
