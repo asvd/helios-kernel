@@ -59,11 +59,13 @@ init = function() {
 }
 ```
 
-Helios Kernel does not force following a specific way of exporting:
-`init()` function may contain any preferred code. Particulary it may
-declare a factory function safely returning the library object. (But
-if you only need to keep some private module data, you may use the
-`init()` function scope)
+Helios Kernel does not provide the native exporting feature, because
+as explained in [this text](https://gist.github.com/asvd/7619633),
+exporting is rather a limitation and leads to some artificial problems
+(comparing to declaring object as a global). In Helios Kernel `init()`
+function may contain any preferred code, its scope may be used to keep
+some private data, and to make some object available from outside, it
+could be declared as a global.
 
 This is basicly everything you need to know to start using Helios
 Kernel for setting-up the dependencies in your project.
