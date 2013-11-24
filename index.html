@@ -104,14 +104,18 @@ the module above could look:
 
 <span class=inline_code></span>
 
+
 <p>
-Helios Kernel does not force following a specific way of exporting:
-<span class=inline_code>init()</span> function may contain any
-preferred code. Particulary it may declare a factory function safely
-returning the library object. (But if you only need to keep some
-private module data, you may use
-the <span class=inline_code>init()</span> function scope)
+Helios Kernel does not provide the native exporting feature, because
+as explained in <a href="https://gist.github.com/asvd/7619633">this
+text</a>, exporting is rather a limitation and leads to some
+artificial problems (comparing to declaring object as a global). In
+Helios Kernel <span class=inline_code>init()</span> function may
+contain any preferred code, its scope may be used to keep some private
+data, and to make some object available from outside, it could be
+declared as a global.
 </p>
+
 
 <p>
 This is basicly everything you need to know to start using Helios
