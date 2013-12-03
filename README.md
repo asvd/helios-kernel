@@ -1,8 +1,7 @@
-
-Helios Kernel - inculde() for javascript
+Helios Kernel - include() for JavaScript
 ========================================
 
-Helios Kernel is a javascript module loader and dependency manager
+Helios Kernel is a JavaScript module loader and dependency manager
 with a simple module format which is cross-compatible between the
 browser-based environment and [Node.js](http://nodejs.org/) without
 any conversion. Helios Kernel tracks the dependency graph, loads and
@@ -39,7 +38,7 @@ A set of dependencies is listed in the module head using the
 `include()` function, where each call stands for a single dependency.
 The only argument is the exact path to the source of the needed module
 — so that it is always easy to find out the particular dependency
-source locaiton.
+source location.
 
 Module code is located inisde the `init()` function declaration.  It
 will be issued by Helios Kernel as soon as all dependencies are
@@ -73,10 +72,10 @@ Kernel for setting-up the dependencies in your project.
 This text contains the full documentation on Helios Kernel.
 
 
-### Helios Kernel comparing to other approaches
+### Helios Kernel compared to other approaches
 
 There is no native dependency management solution in browser
-environments. To ensure that a set of javascript-libraries is loaded,
+environments. To ensure that a set of JavaScript-libraries is loaded,
 the libraries are usually listed within a single html-page
 header. Managing the dependencies and loading order is too tricky in
 this case, and gets more and more complicated along with the project
@@ -104,9 +103,9 @@ used at once (such module could simply list all dependencies using
 `include()`, without a need to transfer other modules' routines
 through the exported objects)
 
-- reuse "ordinary" javascript libraries designed to be loaded using
+- reuse "ordinary" JavaScript libraries designed to be loaded using
 the `<script>` tag in a html-page (module format is very simple, and
-such library could be easily converted to a module by wrapping its
+such a library could be easily converted to a module by wrapping its
 code with an `init()` function declaration)
 
 
@@ -114,7 +113,7 @@ code with an `init()` function declaration)
 
 - Download the distribution
 [here](https://github.com/asvd/helios-kernel/releases/download/v0.9.5/helios-kernel-0.9.5.tar.gz)
-and unpack it somwhere, i.e. in `helios-kernel/` directory. You may
+and unpack it somewhere, i.e. in `helios-kernel/` directory. You may
 also use [npm](https://npmjs.org/) to install Helios Kernel under
 Node.js:
 
@@ -204,8 +203,8 @@ function to load any Kernel-compatible library.
 ### How to create a Helios Kernel module
 
 Module structure is explained in the first section of this
-text. Basicly a module consists of the two parts: the list of
-dependencies in the module head using the `inculde()` function, and
+text. Basically a module consists of the two parts: the list of
+dependencies in the module head using the `include()` function, and
 the module code inside the `init()` function declaration:
 
 ```js
@@ -221,7 +220,7 @@ init = function() {
 ```
 
 The simpliest approach to make the module data available to other
-modules, is to (globaly) declare the needed objects.
+modules, is to (globally) declare the needed objects.
 
 
 ### Dynamical module loading
@@ -318,16 +317,16 @@ uninit = function() {
 ```
 
 If a module initializer declares a single compound object
-incapsulating all the library routines (the recommended way,
+encapsulating all the library routines (the recommended way,
 `myLibrary` in the example above), simply clearing that object should
-be enough, garbage collector should (hopely) do the rest.
+be enough, garbage collector should (hopefully) do the rest.
 
 
-### How to convert existing javascript library to Kernel module
+### How to convert an existing JavaScript library to a Kernel module
 
 If you have a library of any format, it usually defines a set of
 routines which should be used from the outside later. In most of the
-web-libraries which are intednded to be included using the `<script>`
+web-libraries which are intended to be included using the `<script>`
 tag, a set of global objects is defined. In this case it should be
 enough to wrap the library code with the `init()` function
 declaration. So if the original source was like this:
@@ -364,7 +363,7 @@ library.
 
 For the libraries using some kind of export object, the whole code
 should also be wrapped with the `init()` function. To make the
-exported objects, they could be globally redeclare. For instance, a
+exported objects, they could be globally redeclared. For instance, a
 CommonJS module could looks like this:
 
 ```js
@@ -394,7 +393,7 @@ init = function() {
 }
 ```
 
-After this module is loaded, its routines could be refered as
+After this module is loaded, its routines could be referred to as
 `someLibrary.someObject`.
 
 
