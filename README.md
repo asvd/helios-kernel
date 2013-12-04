@@ -86,7 +86,7 @@ In Node.js there is a native dependency declaration technique — the
 [CommonJS](http://en.wikipedia.org/wiki/CommonJS) group. Just like as
 in most of browser-based solutions, it introduces object exporting,
 which [as mentioned](https://gist.github.com/asvd/7619633) more likely
-brings unnecesary complications to dependency management and objects
+brings unnecessary complications to dependency management and objects
 declaration. Therefore Helios Kernel pretends to be a simplier and
 more flexible alternative.
 
