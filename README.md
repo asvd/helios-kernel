@@ -59,9 +59,8 @@ init = function() {
 ```
 
 Helios Kernel does not provide the native exporting feature, because
-as explained in [this text](https://gist.github.com/asvd/7619633),
-exporting is rather a limitation and leads to some artificial problems
-(comparing to declaring object as a global). In Helios Kernel `init()`
+as explained in [this text](https://gist.github.com/asvd/7619633), it
+has no advantages comparing to simply declaring globals. The `init()`
 function may contain any preferred code, its scope may be used to keep
 some private data, and to make some object available from outside, it
 could be declared as a global.
@@ -84,9 +83,12 @@ libraries exist, one of which is Helios Kernel.
 
 In Node.js there is a native dependency declaration technique — the
 `require()` function which implements the specifications suggested by
-[CommonJS](http://en.wikipedia.org/wiki/CommonJS) group. Helios Kernel
-pretends to be a simplier and more flexible alternative to the
-CommonJS specifications.
+[CommonJS](http://en.wikipedia.org/wiki/CommonJS) group. Just like as
+in most of browser-based solutions, it introduces object exporting,
+which [as mentioned](https://gist.github.com/asvd/7619633) more likely
+brings unnecesary complications to dependency management and objects
+declaration. Therefore Helios Kernel pretends to be a simplier and
+more flexible alternative.
 
 Helios Kernel may be preferred because of its simplicity, or if there
 is a need to to have the modules compatible between web and Node.js
