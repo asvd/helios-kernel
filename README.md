@@ -58,12 +58,16 @@ init = function() {
 }
 ```
 
-Helios Kernel does not provide the native exporting feature, because
-as explained in [this text](https://gist.github.com/asvd/7619633), it
-has no advantages comparing to simply declaring globals. The `init()`
-function may contain any preferred code, its scope may be used to keep
-some private data, and to make some object available from outside, it
-could be declared as a global.
+In this example the `myLibrary` object is declared as a global. This
+approach is more flexible comparing to exporting, because it does not
+force an artificial coupling between a module (library internal
+structure) and the exported object (library interface). [This
+text](https://gist.github.com/asvd/7619633) contains the detailed
+explanation of why exporting seems to have no advantages.
+
+The `init()` function may contain any preferred code, its scope may be
+used to keep some private data, and to make some object available from
+outside, it could be declared as a global.
 
 This is basicly everything you need to know to start using Helios
 Kernel for setting-up the dependencies in your project.
