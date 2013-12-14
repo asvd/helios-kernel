@@ -102,17 +102,20 @@ the module above could look:
 </pre>
 
 
-<span class=inline_code></span>
-
+<p>
+In this example the <span class=inline_code>myLibrary</span> object is
+declared as a global. This approach is more flexible comparing to
+exporting, because it does not force an artificial coupling between a
+module (library internal structure) and the exported object (library
+interface). <a href="https://gist.github.com/asvd/7619633">This
+text</a> contains the detailed explanation of why exporting seems to
+have no advantages.
+</p>
 
 <p>
-Helios Kernel does not provide the native exporting feature, because
-as explained in <a href="https://gist.github.com/asvd/7619633">this
-text</a>, it has no advantages comparing to simply declaring
-globals. The <span class=inline_code>init()</span> function may
-contain any preferred code, its scope may be used to keep some private
-data, and to make some object available from outside, it could be
-declared as a global.
+The <span class=inline_code>init()</span> function may contain any preferred code, its scope may be
+used to keep some private data, and to make some object available from
+outside, it could be declared as a global.
 </p>
 
 <p>
