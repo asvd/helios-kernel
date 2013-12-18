@@ -67,11 +67,11 @@ explanation of why exporting seems to have no advantages.
 
 The `init()` function may contain any preferred code, its scope may be
 used to keep some private data. To make some object available from
-outside, it could be declared as a global. This is basically
-everything you need to know to start using Helios Kernel for
-setting-up the dependencies in your project.
+outside, it could be declared as a global.
 
-This text contains the full documentation on Helios Kernel.
+This is basicly everything you need to know to start using Helios
+Kernel for setting-up the dependencies in your project. This text
+contains the full documentation on Helios Kernel.
 
 
 ### Helios Kernel compared to other approaches
