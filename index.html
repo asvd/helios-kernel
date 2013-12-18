@@ -113,9 +113,10 @@ have no advantages.
 </p>
 
 <p>
-The <span class=inline_code>init()</span> function may contain any preferred code, its scope may be
-used to keep some private data, and to make some object available from
-outside, it could be declared as a global.
+The <span class=inline_code>init()</span> function may contain any
+preferred code, its scope may be used to keep some private data. To
+make some object available from outside, it could be declared as a
+global.
 </p>
 
 <p>
@@ -334,7 +335,7 @@ module head, and is mostly intended to work with relative paths,
 <span class=inline_code>kernel.require()</span> only accepts
 specifying the absolute path. For a web environment you may start it
 with the slash <span class=inline_code>/</span> which will stand for
-the domain root. To load a romete module, provide the full URL
+the domain root. To load a remote module, provide the full URL
 starting with a protocol
 (<span class=inline_code>http://...</span>). You may also provide an
 array of paths to load several modules at once.
@@ -440,7 +441,7 @@ clearing that object should be enough, garbage collector should
 </p>
 
 
-<h2>How to convert an existing JavaScript library to a Kernel module</h2>
+<h2>How to convert an existing library to a Kernel module</h2>
 
 <p>
 If you have a library of any format, it usually defines a set of
