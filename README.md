@@ -66,7 +66,7 @@ text](https://gist.github.com/asvd/7619633) contains the detailed
 explanation of why exporting seems to have no advantages.
 
 The `init()` function may contain any preferred code, its scope may be
-used to keep some private data, and to make some object available from
+used to keep some private data. To make some object available from
 outside, it could be declared as a global.
 
 This is basicly everything you need to know to start using Helios
@@ -328,7 +328,7 @@ encapsulating all the library routines (the recommended way,
 be enough, garbage collector should (hopefully) do the rest.
 
 
-### How to convert an existing JavaScript library to a Kernel module
+### How to convert an existing library to a Kernel module
 
 If you have a library of any format, it usually defines a set of
 routines which should be used from the outside later. In most of the
