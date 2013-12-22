@@ -3,10 +3,13 @@
  * @fileoverview Config for the command.js for the merge tool
  */
 
-include('ns.js');
         
 init = function() {
-    helios.tools.merge.ns('helios.tools.merge.cfg');
+if (!helios ) helios={};
+if (!helios.tools ) helios.tools={};
+if (!helios.tools.merge) helios.tools.merge={};
+
+    helios.tools.merge.cfg = {};
 
 
     // help message head
