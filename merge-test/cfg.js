@@ -74,7 +74,7 @@ init = function() {
             input     : './main.js',
             quiet  : false,
             plain : false,
-            scope  : 'subdir'
+            scope  : 'global'
         };
 
         for ( var key in def ) {
