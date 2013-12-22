@@ -5,9 +5,9 @@
 
         
 init = function() {
-if (!helios ) helios={};
-if (!helios.tools ) helios.tools={};
-if (!helios.tools.merge) helios.tools.merge={};
+    if (!helios ) helios={};
+    if (!helios.tools ) helios.tools={};
+    if (!helios.tools.merge) helios.tools.merge={};
 
     helios.tools.merge.cfg = {};
 
