@@ -2,9 +2,10 @@ Helios Kernel - include() for JavaScript
 ========================================
 
 Helios Kernel is a JavaScript module loader and dependency manager
-with a simple module format which is cross-compatible between the
-browser-based environment and [Node.js](http://nodejs.org/) without
-any conversion. Helios Kernel tracks the dependency graph, loads and
+with a simple and isomorphic module format, meaning that it may be
+used to build an application which will run both in browser-based
+environment and in [Node.js](http://nodejs.org/) without any
+conversion. Helios Kernel tracks the dependency graph, loads and
 unloads corresponding modules dynamically in the runtime according to
 the needs of different and independent parts of an application. It is
 smart enough to start initializing the modules which are ready for
@@ -24,13 +25,13 @@ declaration is implimented in the classic include-style:
 
 ```js
 // list of dependencies
-include('path/to/myLibrary.js');
+include('path/to/someLibrary.js');
 include('../path/to/anotherLibrary.js');
 
 init = function() {
     // module code,
     // objects declared in the included modules are available at this point
-    myLibrary.sayHello();
+    someLibrary.sayHello();
 }
 ```
 
@@ -44,26 +45,26 @@ Module code is located inisde the `init()` function declaration.  It
 will be issued by Helios Kernel as soon as all dependencies are
 loaded.
 
-This is how `myLibrary.js` included in the module above could look:
+This is how `someLibrary.js` included in the module above could look:
 
 ```js
 init = function() {
     // (globally) declaring a library object
-    myLibrary = {};
+    someLibrary = {};
 
     // library method
-    myLibrary.sayHello = function() {
+    someLibrary.sayHello = function() {
         console.log('Hello World!');
     }
 }
 ```
 
-In this example the `myLibrary` object is declared as a global. This
-approach is more flexible comparing to exporting, because it does not
+In this example the `someLibrary` object is declared as a global. Such
+approach is more flexible comparing to exporting, since it does not
 force an artificial coupling between a module (library internal
 structure) and the exported object (library interface). [This
-text](https://gist.github.com/asvd/7619633) contains the detailed
-explanation of why exporting seems to have no advantages.
+text](https://gist.github.com/asvd/7619633) explains why exporting
+does not have advantages.
 
 The `init()` function may contain any preferred code, its scope may be
 used to keep some private data. To make some object available from
@@ -214,13 +215,13 @@ the module code inside the `init()` function declaration:
 
 ```js
 // list of dependencies
-include('path/to/myLibrary.js');
+include('path/to/someLibrary.js');
 include('../path/to/anotherLibrary.js');
 
 init = function() {
     // module code,
     // objects declared in the included modules are available at this point
-    myLibrary.sayHello();
+    someLibrary.sayHello();
 }
 ```
 
@@ -263,7 +264,7 @@ Therefore, dynamically loading a module looks like this:
 ```js
 var sCallback = function() {
     // the library is loaded, we may use it now
-    myLibrary.doSomething();
+    someLibrary.doSomething();
 }
 
 var fCallback = function() {
@@ -304,10 +305,10 @@ Therefore the full version of a library module could look like this:
 // module initializer
 init = function() {
     // (globally) declaring a library object
-    myLibrary = {};
+    someLibrary = {};
 
     // library method
-    myLibrary.sayHello = function() {
+    someLibrary.sayHello = function() {
         console.log('Hello World!');
     }
 }
@@ -316,15 +317,15 @@ init = function() {
 // module uninitializer
 uninit = function() {
     // removing objects created in initializer
-    myLibrary = null;
-    delete myLibrary;
+    someLibrary = null;
+    delete someLibrary;
 }
 ```
 
 If a module initializer declares a single compound object
 encapsulating all the library routines (the recommended way,
-`myLibrary` in the example above), simply clearing that object should
-be enough, garbage collector should (hopefully) do the rest.
+`someLibrary` in the example above), simply clearing that object
+should be enough, garbage collector should (hopefully) do the rest.
 
 
 ### How to convert an existing library to a Kernel module
