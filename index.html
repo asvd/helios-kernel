@@ -35,16 +35,17 @@
       </p>
 <p>
 Helios Kernel is a JavaScript module loader and dependency manager
-with a simple module format which is cross-compatible between the
-browser-based environment and <a href="http://nodejs.org/">Node.js</a>
-without any conversion. Helios Kernel tracks the dependency graph,
-loads and unloads corresponding modules dynamically in the runtime
-according to the needs of different and independent parts of an
-application. It is smart enough to start initializing the modules
-which are ready for that, while others are still being downloaded or
-parsed, and to handle some tricky problems such as circular
-dependencies or broken code (reporting the problem, but still keeping
-the application alive). But the key feature of Helios Kernel is
+with a simple and isomorphic module format, meaning that it may be
+used to build an application which will run both in browser-based
+environment and in <a href="http://nodejs.org/">Node.js</a> without
+any conversion. Helios Kernel tracks the dependency graph, loads and
+unloads corresponding modules dynamically in the runtime according to
+the needs of different and independent parts of an application. It is
+smart enough to start initializing the modules which are ready for
+that, while others are still being downloaded or parsed, and to handle
+some tricky problems such as circular dependencies or broken code
+(reporting the problem, but still keeping the application alive). But
+the key feature of Helios Kernel is
 </p>
 
 <h2>Simplicity</h2>
@@ -59,13 +60,13 @@ include-style:
 </p>
 
 <pre name="code" class="js">// list of dependencies
-include('path/to/myLibrary.js');
+include('path/to/someLibrary.js');
 include('../path/to/anotherLibrary.js');
 
 init = function() {
     // module code,
     // objects declared in the included modules are available at this point
-    myLibrary.sayHello();
+    someLibrary.sayHello();
 }
 </pre>
 
@@ -86,16 +87,16 @@ loaded.
 </p>
 
 <p>
-This is how <span class=inline_code>myLibrary.js</span> included in
+This is how <span class=inline_code>someLibrary.js</span> included in
 the module above could look:
 </p>
 
 <pre name="code" class="js">init = function() {
     // (globally) declaring a library object
-    myLibrary = {};
+    someLibrary = {};
 
     // library method
-    myLibrary.sayHello = function() {
+    someLibrary.sayHello = function() {
         console.log('Hello World!');
     }
 }
@@ -103,13 +104,12 @@ the module above could look:
 
 
 <p>
-In this example the <span class=inline_code>myLibrary</span> object is
-declared as a global. This approach is more flexible comparing to
-exporting, because it does not force an artificial coupling between a
+In this example the <span class=inline_code>someLibrary</span> object
+is declared as a global. Such approach is more flexible comparing to
+exporting, since it does not force an artificial coupling between a
 module (library internal structure) and the exported object (library
 interface). <a href="https://gist.github.com/asvd/7619633">This
-text</a> contains the detailed explanation of why exporting seems to
-have no advantages.
+text</a> explains why exporting does not give advantages.
 </p>
 
 <p>
@@ -142,8 +142,8 @@ In Node.js there is a native dependency declaration technique &mdash; the
 <span class=inline_code>require()</span> function which implements the
 specifications suggested by
 <a href="http://en.wikipedia.org/wiki/CommonJS">CommonJS</a>
-group. Just like as in most of browser-based solutions, it introduces
-object exporting,
+group. Just like as in most of the browser-based solutions, it
+introduces object exporting,
 which <a href="https://gist.github.com/asvd/7619633">as mentioned</a>
 more likely brings unnecessary complications to dependency management
 and objects declaration. Therefore Helios Kernel pretends to be a
@@ -152,9 +152,9 @@ simplier and more flexible alternative.
 
 <p>
 Helios Kernel may be preferred because of its simplicity, or if there
-is a need to to have the modules compatible between web and Node.js
-environments. Comparing to other dependency-management solutions, with
-Helios Kernel it could be more convenient to:
+is a need to to have the modules isomorphic and compatible between web
+and Node.js environments. Comparing to other dependency-management
+solutions, with Helios Kernel it could be more convenient to:
 </p>
 
 <ul>
@@ -240,8 +240,8 @@ content:
 kernel.require( __dirname + '/main.js');
 </pre>
 
-If you have used npm to install Helios Kernel, you may also do it like
-this:
+If you have used <span class=inline_code>npm</span> to install Helios
+Kernel, you may also do it like this:
 
 <pre name="code" class="js">require('helios-kernel');
 kernel.require( __dirname + '/main.js');
@@ -261,14 +261,14 @@ start the application under node, launch the newly created
    </ol>
 
 
-<h2>How to use Helios Kernel modules with an existing project</h2>
+<h2>How to use Kernel-compatible library with an existing project</h2>
 
   <ol>
     <li>
  Download the Helios Kernel
-distribution <a href="https://github.com/asvd/helios-kernel/releases/download/v0.9.5/helios-kernel-0.9.5.tar.gz">here</a> and unpack
-it somwhere. For Node.js you may also use npm to install
-Helios Kernel:
+distribution <a href="https://github.com/asvd/helios-kernel/releases/download/v0.9.5/helios-kernel-0.9.5.tar.gz">here</a>
+and unpack it somwhere. For Node.js you may also
+use <span class=inline_code>npm</span> to install Helios Kernel:
 <pre name="code" class="js">$ npm install helios-kernel
 </pre>
     </li>
@@ -290,6 +290,15 @@ any Kernel-compatible library.
     </li>
   </ol>
 
+
+<p>
+Optionally you can even convert and merge a Kernel-compatible library
+using the <a href=http://asvd.github.io/helios-merge/>helios-merge</a>
+tool into a plain JavaScript bundle suitable for using without Helios
+Kernel.
+</p>
+
+
 <h2>How to create a Helios Kernel module</h2>
 
 <p>
@@ -302,13 +311,13 @@ declaration:
 </p>
 
 <pre name="code" class="js">// list of dependencies
-include('path/to/myLibrary.js');
+include('path/to/someLibrary.js');
 include('../path/to/anotherLibrary.js');
 
 init = function() {
     // module code,
     // objects declared in the included modules are available at this point
-    myLibrary.sayHello();
+    someLibrary.sayHello();
 }
 </pre>
 
@@ -357,8 +366,8 @@ cancellation behaviour for the loading failure.
 The returned value of <span class=inline_code>kernel.require()</span>
 is a reservation ticket, a special object corresponding to a
 single <span class=inline_code>require()</span> act. You will need the
-ticket if you wish to unload requested modules in the future when you
-don't need them anymore.
+ticket if you wish to unload the requested modules in the future when
+you don't need them anymore.
 </p>
 
 <p>
@@ -367,7 +376,7 @@ Therefore, dynamically loading a module looks like this:
 
 <pre name="code" class="js">var sCallback = function() {
     // the library is loaded, we may use it now
-    myLibrary.doSomething();
+    someLibrary.doSomething();
 }
 
 var fCallback = function() {
@@ -412,10 +421,10 @@ Therefore the full version of a library module could look like this:
 <pre name="code" class="js">// module initializer
 init = function() {
     // (globally) declaring a library object
-    myLibrary = {};
+    someLibrary = {};
 
     // library method
-    myLibrary.sayHello = function() {
+    someLibrary.sayHello = function() {
         console.log('Hello World!');
     }
 }
@@ -423,17 +432,17 @@ init = function() {
 
 // module uninitializer
 uninit = function() {
-    // removing objects created in initializer
-    myLibrary = null;
-    delete myLibrary;
+    // removing objects created in the initializer
+    someLibrary = null;
+    delete someLibrary;
 }
 </pre>
 
 <p>
 If a module initializer declares a single compound object
 encapsulating all the library routines (the recommended way,
-<span class=inline_code>myLibrary</span> in the example above), simply
-clearing that object should be enough, garbage collector should
+<span class=inline_code>someLibrary</span> in the example above),
+simply clearing that object should be enough, garbage collector should
 (hopefully) do the rest.
 </p>
 
