@@ -1,4 +1,4 @@
-Helios Kernel - include() for JavaScript
+Helios Kernel — include() for JavaScript
 ========================================
 
 Helios Kernel is a JavaScript module loader and dependency manager
@@ -64,7 +64,7 @@ approach is more flexible comparing to exporting, since it does not
 force an artificial coupling between a module (library internal
 structure) and the exported object (library interface). [This
 text](https://gist.github.com/asvd/7619633) explains why exporting
-does not have advantages.
+does not give advantages.
 
 The `init()` function may contain any preferred code, its scope may be
 used to keep some private data. To make some object available from
@@ -88,16 +88,16 @@ libraries exist, one of which is Helios Kernel.
 In Node.js there is a native dependency declaration technique — the
 `require()` function which implements the specifications suggested by
 [CommonJS](http://en.wikipedia.org/wiki/CommonJS) group. Just like as
-in most of browser-based solutions, it introduces object exporting,
-which [as mentioned](https://gist.github.com/asvd/7619633) more likely
-brings unnecessary complications to dependency management and objects
-declaration. Therefore Helios Kernel pretends to be a simplier and
-more flexible alternative.
+in most of the browser-based solutions, it introduces object
+exporting, which [as mentioned](https://gist.github.com/asvd/7619633)
+more likely brings unnecessary complications to dependency management
+and objects declaration. Therefore Helios Kernel pretends to be a
+simplier and more flexible alternative.
 
 Helios Kernel may be preferred because of its simplicity, or if there
-is a need to to have the modules compatible between web and Node.js
-environments. Comparing to other dependency-management solutions, with
-Helios Kernel it could be more convenient to:
+is a need to to have the modules isomorphic and compatible between web
+and Node.js environments. Comparing to other dependency-management
+solutions, with Helios Kernel it could be more convenient to:
 
 - modify or refactor a list of dependencies, especially when there are
 a lot of them (each dependency is just a single `include()` line
@@ -166,8 +166,8 @@ require('helios-kernel/kernel.js');
 kernel.require( __dirname + '/main.js');
 ```
 
-If you have used npm to install Helios Kernel, you may also do it like
-this:
+If you have used `npm` to install Helios Kernel, you may also do it
+like this:
 
 ```js
 require('helios-kernel');
@@ -184,11 +184,11 @@ $ nodejs nodestart.js
 ```
 
 
-### How to use Kernel-compatible modules with an existing project
+### How to use Kernel-compatible library with an existing project
 
 - Download the Helios Kernel distribution
 [here](https://github.com/asvd/helios-kernel/releases/download/v0.9.5/helios-kernel-0.9.5.tar.gz)
-and unpack it somwhere. For Node.js you may also use npm to install
+and unpack it somwhere. For Node.js you may also use `npm` to install
 Helios Kernel:
 
 ```sh
@@ -204,6 +204,11 @@ previous section).
 
 - After the Helios Kernel is loaded, you may use `kernel.require()`
 function to load any Kernel-compatible library.
+
+Optionally you can even convert and merge a Kernel-compatible library
+using the [helios-merge](http://asvd.github.io/helios-merge/) tool
+into a plain JavaScript bundle suitable for using without Helios
+Kernel.
 
 
 ### How to create a Helios Kernel module
@@ -256,8 +261,8 @@ cancellation behaviour for the loading failure.
 
 The returned value of `kernel.require()` is a reservation ticket, a
 special object corresponding to a single `require()` act. You will
-need the ticket if you wish to unload requested modules in the future
-when you don't need them anymore.
+need the ticket if you wish to unload the requested modules in the
+future when you don't need them anymore.
 
 Therefore, dynamically loading a module looks like this:
 
@@ -316,7 +321,7 @@ init = function() {
 
 // module uninitializer
 uninit = function() {
-    // removing objects created in initializer
+    // removing objects created in the initializer
     someLibrary = null;
     delete someLibrary;
 }
