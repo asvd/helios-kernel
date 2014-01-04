@@ -206,7 +206,7 @@ previous section).
 function to load any Kernel-compatible library.
 
 Optionally you can even convert and merge a Kernel-compatible library
-using the [helios-merge](http://asvd.github.io/helios-merge/) tool
+using the [helios-merge](http://github.com/asvd/helios-merge/) tool
 into a plain JavaScript bundle suitable for using without Helios
 Kernel.
 
