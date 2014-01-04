@@ -180,7 +180,7 @@ start the application under node, launch the newly created
 `nodestart.js` using Node.js:
 
 ```sh
-$ nodejs nodestart.js
+$ node nodestart.js
 ```
 
 
