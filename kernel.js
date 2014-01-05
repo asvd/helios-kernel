@@ -747,10 +747,8 @@ for ( var i in kernel._states ) {
  */
 kernel._getAbsolute = function( path, childPath ) {
     // concatinating path with the child's path (without the filename)
-    // path starting from 'http://' or '/' treated as absolute
-    if ( path.substr(0,7).toLowerCase() != 'http://' &&
-         path.substr(0,8).toLowerCase() != 'https://'&&
-         path.substr(0,1) != '/' ) {
+    // remote path and path starting from '/' treated as absolute
+    if ( !kernel._isRemote(path) && path.substr(0,1) != '/' ) {
         path = childPath.substr( 0, childPath.lastIndexOf('/')+1 ) + path;
     }
 
@@ -762,6 +760,24 @@ kernel._getAbsolute = function( path, childPath ) {
     } while ( newPath!=path );
 
     return path;
+}
+
+
+
+/**
+ * @function kernel._isRemote() checks if the given path points to the
+ * remote file
+ * 
+ * @param {String} path to check for being remote
+ * 
+ * @returns {Boolean} true if path starts with 'http', false otherwise
+ */
+kernel._isRemote = function( path ) {
+    var remote =
+        path.substr(0,7).toLowerCase() == 'http://' ||
+        path.substr(0,8).toLowerCase() == 'https://';
+
+    return remote;
 }
 
 
@@ -975,7 +991,15 @@ if ( typeof window != 'undefined' ) {
 
 } else {
     // NODEJS
-    kernel._platform.load = function( path, sCb, fCb ) {
+
+    /**
+     * Loads local module under NodeJS
+     * 
+     * @param {String} path of the local module to load
+     * @param {Function} sCb success callback
+     * @param {Function} fCb failure callback
+     */
+    kernel._platform._loadLocal = function( path, sCb, fCb ) {
         try {
             require(path);
             // removing code from the cache:
@@ -988,6 +1012,74 @@ if ( typeof window != 'undefined' ) {
         }
 
         kernel._platform.thread(sCb);
+    }
+
+
+
+    /**
+     * Downloads and executes remote module under NodeJS
+     * 
+     * @param {String} path of the remote module to load
+     * @param {Function} sCb success callback
+     * @param {Function} fCb failure callback
+     */
+    kernel._platform._loadRemote = function( path, sCb, fCb ) {
+        var http = require('http');
+
+        var fail = function(e) {
+            kernel._platform.thread(fCb);
+            kernel._throw(e);
+        }
+
+        var execute = function(code) {
+            try {
+                require('vm').runInThisContext( code,  path );
+            } catch(e) {
+                fail(e);
+            }
+
+            kernel._platform.thread(sCb);
+        }
+
+        var receive = function(res) {
+            if ( res.statusCode != 200 ) {
+                fail('Responce status code: ' + res.statusCode);
+            } else {
+                var content = '';
+                res.on( 'end', function() { execute(content); } );
+                res.on(
+                    'readable',
+                    function() {
+                        var chunk=res.read();
+                        content += chunk.toString();
+                    }
+                );
+            }
+        }
+
+        try {
+            http.get( path, receive ).on('error', fail );
+        } catch (e) {
+            fail(e);
+        }
+    }
+
+
+
+    /**
+     * Loads and executes a module with a given path (local or remote)
+     * under NodeJS
+     * 
+     * @param {String} path of the remote module to load
+     * @param {Function} sCb success callback
+     * @param {Function} fCb failure callback
+     */
+    kernel._platform.load = function( path, sCb, fCb ) {
+        if ( kernel._isRemote(path) ) {
+            kernel._platform._loadRemote( path, sCb, fCb );
+        } else {
+            kernel._platform._loadLocal( path, sCb, fCb );
+        }
     }
 }
 

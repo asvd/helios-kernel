@@ -660,7 +660,44 @@ init = function() {
     var stage31 = function() {
         check( !test19_init ); // should not init ignoring non-existing dependence
         kernel.release( stage30_1ticket );
-        setTimeout( stage32, 100 );
+        setTimeout( stage31_2, 100 );
+    }
+    var stage31_2 = function() {
+        
+        
+        
+        
+        newTest("Remote dependency");
+        test19a_check = false;
+        helios_remote_dependency_initialized = false;
+        helios_remote_module_initialized = false;
+
+        var sCb = function() {
+            check(true);
+            stage31_3();
+        }
+        
+        var fCb = function() {
+            check(false);
+            stage31_3();
+        }
+
+        stage31_2_ticket = kernel.require(
+            dir + "/test19a/test19a.js", sCb, fCb
+        );
+    }
+
+    var stage31_3 = function() {
+        check( test19a_check );
+        check( helios_remote_dependency_initialized );
+        check( helios_remote_module_initialized );
+        kernel.release(stage31_2_ticket);
+        
+        
+
+
+
+        stage32();
     }
     var stage32 = function() {
 
