@@ -95,8 +95,9 @@ init = function() {
      * Runs the given set of tests
      * 
      * @param {Array} tests list of tests to execute
+     * @param {Function} callback optional callback to run after the tests
      */
-    lighttest.run = function (tests) {
+    lighttest.run = function (tests, callback) {
         var testsArr = [];
         for (var label in tests) {
             if (tests.hasOwnProperty(label)) {
@@ -109,6 +110,7 @@ init = function() {
         lighttest._tests = testsArr;
         lighttest._testsFailed = 0;
         lighttest._currentTestIdx = 0;
+        lighttest._callback = null;
         lighttest._next();
     };
     /**
@@ -157,6 +159,9 @@ init = function() {
      * Finalizes testing after all tests completed
      */
     lighttest._finalize = function () {
+        if (lighttest._callback) {
+            lighttest._callback();
+        }
         var failed = lighttest._testsFailed;
         var total = lighttest._tests.length;
         lighttest._platform.printLine();
