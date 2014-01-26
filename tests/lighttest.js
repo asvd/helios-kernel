@@ -1,22 +1,55 @@
-
+/**
+ * This is a set of Helios Kernel modules merged by helios-merge tool
+ *
+ * http://asvd.github.io/helios-kernel
+ * http://github.com/asvd/helios-merge
+ *
+ * The comment related to this code normally preceeds the main module
+ * (following the last here, according to the dependency order)
+ */
 
 init = function() {
 
-// /home/xpostman/projects/code/lighttest/github/lighttest/base.js
-(function(){{
+// base.js
+
+/**
+ * @fileoverview Lighttest library base object definition
+ */
+(function(){
     lighttest = {};
-}})();
+})();
 
 
-// /home/xpostman/projects/code/lighttest/github/lighttest/platform.js
-(function(){{
+
+// platform.js
+
+/**
+ * @fileoverview Platform-dependent routines for the Lighttest library
+ */
+(function(){
     lighttest._platform = {};
-    if (typeof window != 'undefined') {
-        // WEB
-        var body = document.getElementsByTagName('body').item(0);
-        body.style.margin = 0;
+    lighttest._platform._initialized = false;
+    /**
+     * Initializes Lighttest upon the first launch of the tests
+     */
+    lighttest._platform.init = function () {
+        if (!lighttest._platform._initialized) {
+            if (typeof window != 'undefined') {
+                lighttest._platform._initWeb();
+            } else {
+                lighttest._platform._initNode();
+            }
+            lighttest._platform._initialized = true;
+        }
+    };
+    /**
+     * Initializes Lighttest for the web-based environment
+     */
+    lighttest._platform._initWeb = function () {
+        var target = document.getElementById('lighttest') || document.getElementsByTagName('body').item(0);
+        target.style.margin = 0;
         var style1 = {
-                backgroundColor: 'rgb(2, 14, 15)',
+                backgroundColor: 'rgb(2,14,15)',
                 width: '100%',
                 height: '100%',
                 overflow: 'auto',
@@ -26,13 +59,13 @@ init = function() {
         for (var i in style1) {
             div1.style[i] = style1[i];
         }
-        body.appendChild(div1);
+        target.appendChild(div1);
         var style2 = {
-                color: 'rgb(173, 196, 190)',
+                color: 'rgb(173,196,190)',
+                paddingBottom: '5px',
                 paddingLeft: '5px',
                 fontFamily: 'monospace',
                 fontSize: '8pt',
-                overflow: 'auto',
                 position: 'absolute'
             };
         var div2 = document.createElement('div');
@@ -54,16 +87,29 @@ init = function() {
         lighttest._platform.printGreen = function (text) {
             lighttest._platform._printPlain('<span style="' + styleGreen + '">' + text + '</span>');
         };
+        var styleBlue = 'text-shadow: 0px 0px 8px #507EA3; color: #58AEC9;';
+        lighttest._platform.printBlue = function (text) {
+            lighttest._platform._printPlain('<span style="' + styleBlue + '">' + text + '</span>');
+        };
         lighttest._platform.printLine = function () {
             lighttest._platform.print(' <br/>');
+            setTimeout(function () {
+                div1.scrollTop = div1.scrollHeight;
+            }, 1);
+        };
+        lighttest._platform.reset = function () {
+            div2.innerHTML = '';
         };
         lighttest._platform.exit = function (code) {
         };
-    } else {
-        // NODEJS
+    };
+    /**
+     * Initializes Lighttest for the Node.js-based environment
+     */
+    lighttest._platform._initNode = function () {
         var red = '\x1B[31m';
         var green = '\x1B[32m';
-        var blue = '\x1B[34m';
+        var blue = '\x1B[36m';
         var reset = '\x1B[0m';
         lighttest._platform.print = function (val) {
             process.stdout.write(val);
@@ -74,8 +120,13 @@ init = function() {
         lighttest._platform.printGreen = function (text) {
             lighttest._platform.print(green + text + reset);
         };
+        lighttest._platform.printBlue = function (text) {
+            lighttest._platform.print(blue + text + reset);
+        };
         lighttest._platform.printLine = function () {
             console.log();
+        };
+        lighttest._platform.reset = function (code) {
         };
         lighttest._platform.exit = function (code) {
             process.exit(code);
@@ -85,33 +136,86 @@ init = function() {
             console.log();
             console.error(err);
         });
-    }
-}})();
+    };
+})();
 
 
-// /home/xpostman/projects/code/lighttest/github/lighttest/lighttest.js
-(function(){{
+
+// lighttest.js
+
+/**
+ * @fileoverview Lighttest - a clear testing environment
+ * 
+ * @version 0.1.0
+ * 
+ * Copyright (c) 2014 asvd <heliosframework@gmail.com> 
+ * 
+ * Lighttest library is licensed under the MIT license,
+ * see http://github.com/asvd/lighttest
+ */
+(function(){
+    lighttest._state = 'nothing';
+    lighttest._pendingTests = null;
+    lighttest._pendingCallback = null;
     /**
      * Runs the given set of tests
      * 
      * @param {Array} tests list of tests to execute
-     * @param {Function} callback optional callback to run after the tests
+     * @param {Function} callback to run after the tests
      */
-    lighttest.run = function (tests, callback) {
-        var testsArr = [];
-        for (var label in tests) {
-            if (tests.hasOwnProperty(label)) {
-                testsArr.push({
-                    label: label,
-                    run: tests[label]
-                });
+    lighttest.start = function (tests, callback) {
+        switch (lighttest._state) {
+        case 'nothing':
+        case 'paused':
+            // (re)start
+            lighttest._platform.init();
+            lighttest._platform.reset();
+            lighttest._testsFailed = 0;
+            lighttest._currentTestIdx = 0;
+            lighttest._state = 'running';
+            lighttest._callback = callback || null;
+            lighttest._tests = [];
+            for (var label in tests) {
+                if (tests.hasOwnProperty(label)) {
+                    lighttest._tests.push({
+                        label: label,
+                        method: tests[label]
+                    });
+                }
             }
+            lighttest._next();
+            break;
+        case 'running':
+        case 'interrupting':
+            // switching to restart even in case of requested pause
+            // (restart is stronger)
+            lighttest._state = 'interrupting';
+            lighttest._pendingTests = tests;
+            lighttest._pendingCallback = callback;
+            break;
         }
-        lighttest._tests = testsArr;
-        lighttest._testsFailed = 0;
-        lighttest._currentTestIdx = 0;
-        lighttest._callback = callback || null;
-        lighttest._next();
+    };
+    /**
+     * (Un)pauses the tests execution (waiting until the currently
+     * running test is completed)
+     */
+    lighttest.pause = function () {
+        switch (lighttest._state) {
+        case 'nothing':
+        case 'interrupting':
+            break;
+        case 'running':
+            // pausing
+            lighttest._state = 'interrupting';
+            lighttest._pendingTests = null;
+            lighttest._pendingCallback = null;
+            break;
+        case 'paused':
+            // unpausing
+            lighttest._state = 'running';
+            lighttest._next();
+            break;
+        }
     };
     /**
      * Checks the given value against being true, logs the result for
@@ -128,40 +232,66 @@ init = function() {
         }
     };
     /**
+     * Called by the test body when finished, launches the next test
+     */
+    lighttest.done = function () {
+        // let pause() called after done() time to perform
+        setTimeout(lighttest._done, 10);
+    };
+    /**
+     * Launches the next test
+     */
+    lighttest._done = function () {
+        if (lighttest._currentFailed) {
+            lighttest._testsFailed++;
+        }
+        lighttest._currentTestIdx++;
+        switch (lighttest._state) {
+        case 'paused':
+        case 'nothing':
+            // tests not running
+            break;
+        case 'running':
+            // normal case, prevent stack growth
+            setTimeout(lighttest._next, 0);
+            break;
+        case 'interrupting':
+            // pause requested
+            lighttest._platform.printLine();
+            lighttest._platform.printLine();
+            lighttest._platform.printBlue('// paused');
+            lighttest._platform.printLine();
+            lighttest._state = 'paused';
+            if (lighttest._pendingTests) {
+                // restart requested
+                var tests = lighttest._pendingTests;
+                var callback = lighttest._pendingCallback;
+                lighttest._pendingTests = null;
+                lighttest._pendingCallback = null;
+                lighttest.start(tests, callback);
+            }
+            break;
+        }
+    };
+    /**
      * Proceeds to the next test
      */
     lighttest._next = function () {
         var idx = lighttest._currentTestIdx;
-        if (idx >= lighttest._tests.length) {
-            // all tests processed
+        if (idx == lighttest._tests.length) {
             lighttest._finalize();
         } else {
             lighttest._platform.printLine();
             lighttest._currentFailed = false;
             var test = lighttest._tests[idx];
-            var label = test.label;
-            lighttest._platform.print(label + ' ');
-            test.run();
+            lighttest._platform.print(test.label + ' ');
+            setTimeout(test.method, 0);
         }
-    };
-    /**
-     * Called by the test body when finished, launches the next test
-     */
-    lighttest.done = function () {
-        if (lighttest._currentFailed) {
-            lighttest._testsFailed++;
-        }
-        lighttest._currentTestIdx++;
-        // prevent stack growth
-        setTimeout(lighttest._next, 10);
     };
     /**
      * Finalizes testing after all tests completed
      */
     lighttest._finalize = function () {
-        if (lighttest._callback) {
-            lighttest._callback();
-        }
         var failed = lighttest._testsFailed;
         var total = lighttest._tests.length;
         lighttest._platform.printLine();
@@ -175,9 +305,14 @@ init = function() {
         }
         lighttest._platform.printLine();
         lighttest._platform.printLine();
+        lighttest._state = 'nothing';
+        if (lighttest._callback) {
+            lighttest._callback(failed);
+        }
         lighttest._platform.exit(failed);
     };
-}})();
+})();
+
 
 
 
@@ -186,7 +321,3 @@ init = function() {
 
 
 
-uninit = function() {
-
-
-};

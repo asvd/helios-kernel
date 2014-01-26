@@ -3,7 +3,7 @@ include("lighttest.js");
 init = function() {
     var dir = typeof __dirname != 'undefined' ? __dirname : '';
 
-    lighttest.run({
+    lighttest.start({
 
         'Dynamically loading and unloading a module with a dependency':
         function() {
