@@ -110,7 +110,7 @@ init = function() {
         lighttest._tests = testsArr;
         lighttest._testsFailed = 0;
         lighttest._currentTestIdx = 0;
-        lighttest._callback = null;
+        lighttest._callback = callback || null;
         lighttest._next();
     };
     /**
