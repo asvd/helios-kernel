@@ -118,7 +118,7 @@ code with an `init()` function declaration)
 ### How to setup a new project based on the Helios Kernel
 
 - Download the distribution
-[here](https://github.com/asvd/helios-kernel/releases/download/v0.9.5/helios-kernel-0.9.5.tar.gz)
+[here](https://github.com/asvd/helios-kernel/releases/download/v0.9.6/helios-kernel-0.9.6.tar.gz)
 and unpack it somewhere, i.e. in `helios-kernel/` directory. You may
 also use [npm](https://npmjs.org/) to install Helios Kernel under
 Node.js:
@@ -187,7 +187,7 @@ $ node nodestart.js
 ### How to use Kernel-compatible library with an existing project
 
 - Download the Helios Kernel distribution
-[here](https://github.com/asvd/helios-kernel/releases/download/v0.9.5/helios-kernel-0.9.5.tar.gz)
+[here](https://github.com/asvd/helios-kernel/releases/download/v0.9.6/helios-kernel-0.9.6.tar.gz)
 and unpack it somwhere. For Node.js you may also use `npm` to install
 Helios Kernel:
 
