@@ -1,13 +1,16 @@
 Helios Kernel — include() for JavaScript
 ========================================
 
-Helios Kernel is a JavaScript module loader and dependency manager
-with a simple and isomorphic module format, meaning that it may be
-used to build an application which will run both in browser-based
-environment and in [Node.js](http://nodejs.org/) without any
-conversion. Helios Kernel tracks the dependency graph, loads and
-unloads corresponding modules dynamically in the runtime according to
-the needs of different and independent parts of an application. It is
+Helios Kernel is an isomorphic JavaScript module loader and dependency
+manager. Under *isomorphic* it is implied that an application or a
+library based upon the Helios Kernel can run both in browser-based
+environment and in [Node.js](http://nodejs.org/) natively and without
+any kind of conversion. For the moment of writing, this is the only
+module loader focused on being truly isomorphic.
+
+Helios Kernel tracks the dependency graph, loads and unloads
+corresponding modules dynamically in the runtime according to the
+needs of different and independent parts of an application. It is
 smart enough to start initializing the modules which are ready for
 that, while others are still being downloaded or parsed, and to handle
 some tricky problems such as circular dependencies or broken code
@@ -17,8 +20,7 @@ the key feature of Helios Kernel is
 
 ### Simplicity
 
-Following the [KISS
-principle](http://en.wikipedia.org/wiki/KISS_principle), Helios Kernel
+Helios Kernel
 provides the necessary features intended to make dependency management
 simple and straightforward. Syntax of a module and dependency
 declaration is implimented in the classic include-style:
@@ -59,16 +61,30 @@ init = function() {
 }
 ```
 
-In this example the `someLibrary` object is declared as a global. Such
-approach is more flexible comparing to exporting, since it does not
-force an artificial coupling between a module (library internal
-structure) and the exported object (library interface). [This
-text](https://gist.github.com/asvd/7619633) explains why exporting
-does not give advantages.
+In this example the `someLibrary` object is declared as a global.
+This differs to a more common approach of objects exporting (which is
+considered as a must-have nowadays and is reused in most of other
+loaders), however this is done intentionally and there are some
+serious reasons for that:
 
-The `init()` function may contain any preferred code, its scope may be
-used to keep some private data. To make some object available from
-outside, it could be declared as a global.
+*The exporting technique (based on the [module
+pattern](http://www.adequatelygood.com/JavaScript-Module-Pattern-In-Depth.html))
+aims to provide the precise control over the objects created by a
+library, but its disadvantage is the overheads during managing the
+dependency structure introduced by an artificial coupling between a
+module (library internal structure) and the exported object (library
+interface). Moreover, deeper investigation shows that such fine
+control over the exported objects [does not bring any advantages over
+simply declaring globals](https://gist.github.com/asvd/7619633).*
+
+For that reason in Helios Kernel (as being focused on simplicity) it
+is suggested to use globals as a method of sharing objects between the
+modules (however it is certainly possible to build any custom and
+exporting technique on the top of it).
+
+Thereby the `init()` function may contain any preferred code, its
+scope may be used to keep some private data, and to make some object
+available from outside, it could be declared as a global.
 
 This is basicly everything you need to know to start using Helios
 Kernel for setting-up the dependencies in your project. This text
@@ -407,7 +423,4 @@ init = function() {
 After this module is loaded, its routines could be referred to as
 `someLibrary.someObject`.
 
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/asvd/helios-kernel/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
