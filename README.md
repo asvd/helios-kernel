@@ -77,10 +77,10 @@ interface). Moreover, deeper investigation shows that such fine
 control over the exported objects [does not bring any advantages over
 simply declaring globals](https://gist.github.com/asvd/7619633).*
 
-For that reason in Helios Kernel (as being focused on simplicity) it
-is suggested to use globals as a method of sharing objects between the
-modules (however it is certainly possible to build any custom and
-exporting technique on the top of it).
+Helios Kernel does not apply any restrictions on how to transfer the
+data between the modules, even some custom exporting technique may be
+implemented on top of it. However declaring an object as a global is
+suggested as a simpliest method.
 
 Thereby the `init()` function may contain any preferred code, its
 scope may be used to keep some private data, and to make some object
