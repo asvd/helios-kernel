@@ -23,7 +23,7 @@ the key feature of Helios Kernel is
 Helios Kernel
 provides the necessary features intended to make dependency management
 simple and straightforward. Syntax of a module and dependency
-declaration is implimented in the classic include-style:
+declaration is implemented in the classic include-style:
 
 ```js
 // list of dependencies
