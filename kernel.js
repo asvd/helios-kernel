@@ -63,6 +63,9 @@ if (typeof kernel == 'undefined') {
 init = null;
 uninit = null;
 
+// conventional libraries storage object
+LIB = {};
+
 kernel._states = {
     created        : 0,  // initial state, not yet loaded
     loading        : 1,  // being loaded at the moment
@@ -79,20 +82,20 @@ kernel._states = {
  *
  * @param {String} path of the module to include
  */
-include = function( path ) {
+include = function(path) {
     var child = kernel._activeModule;
     if (child) {
-        path = kernel._getAbsolute( path, child.path );
-        if ( child.isSubChild(path) ) {
-            kernel._throw( 'Circular dependence: ' + path );
+        path = kernel._getAbsolute(path, child.path);
+        if (child.isSubChild(path)) {
+            kernel._throw('Circular dependence: ' + path);
             child.invalidate();
         } else {
             var module = kernel._getOrCreateModule(path);
             module.addChild(child);
 
             // participating in child's stats
-            for ( var i = 0; i < child._statsList.length; i++ ) {
-                module.addStats( child._statsList[i] );
+            for (var i = 0; i < child._statsList.length; i++) {
+                module.addStats(child._statsList[i]);
             }
         }
     }  // else include() was not called in the module head
@@ -115,18 +118,18 @@ include = function( path ) {
  *
  * @returns {kernel._Ticket} reservation ticket
  */
-kernel.require = function( paths, sCb, fCb ) {
-    if ( typeof paths == 'string' ) {
+kernel.require = function(paths, sCb, fCb) {
+    if (typeof paths == 'string') {
         // single module required
         paths = [paths];
     }
 
     var modules = [];
-    for ( var i = 0; i < paths.length; i++ ) {
-        modules.push( kernel._getOrCreateModule(paths[i]) );
+    for (var i = 0; i < paths.length; i++) {
+        modules.push(kernel._getOrCreateModule(paths[i]));
     }
 
-    return new kernel._Ticket( modules, sCb, fCb );
+    return new kernel._Ticket(modules, sCb, fCb);
 }
 
 
@@ -137,7 +140,7 @@ kernel.require = function( paths, sCb, fCb ) {
  *
  * @param {kernel._Ticket} ticket to be released
  */
-kernel.release = function( ticket ) {
+kernel.release = function(ticket) {
     ticket._release();
 }
 
@@ -151,21 +154,21 @@ kernel.release = function( ticket ) {
  * 
  * @returns {Array} statistics array
  */
-kernel.getStats = function( ticket ) {
+kernel.getStats = function(ticket) {
     var nativeStats = ticket ? ticket._getStats() : kernel._stats
 
     var total = 0;
-    for ( var i in kernel._states ) {
-        total += nativeStats[ kernel._states[i] ];
+    for (var i in kernel._states) {
+        total += nativeStats[kernel._states[i]];
     }
 
     // modules which are created or loading may reveal new dependences
-    var pending = nativeStats[ kernel._states.created ] ||
-                  nativeStats[ kernel._states.loading ];
+    var pending = nativeStats[kernel._states.created] ||
+                  nativeStats[kernel._states.loading];
 
     return {
         total : total,
-        ready : nativeStats[ kernel._states.ready ],
+        ready : nativeStats[kernel._states.ready],
         pending : pending
     };
 }
@@ -184,7 +187,7 @@ kernel.getStats = function( ticket ) {
  * @property children[] keeps the modules which included this module
  * @property parents[] keeps the modules included by this module
  */
-kernel._Module = function( path ) {
+kernel._Module = function(path) {
     this.path = path;
     this.state = kernel._states.created;
     this.children = [];
@@ -195,7 +198,7 @@ kernel._Module = function( path ) {
     kernel._modules.push(this);
     kernel._loadQueue.push(this);
     this._statsList = []; // list of statistics where participating
-    this.addStats( kernel._stats );
+    this.addStats(kernel._stats);
 }
 
 
@@ -205,25 +208,25 @@ kernel._Module = function( path ) {
  * calling the platform-dependent script loading function
  */
 kernel._Module.prototype.load = function() {
-    this.setState( kernel._states.loading );
+    this.setState(kernel._states.loading);
 
     var me = this;
     var sCb = function() {
-        if ( me.state == kernel._states.loading ) {
+        if (me.state == kernel._states.loading) {
             me.finalizeLoading();
         }  // otherwise module could already be invalidated
            // because of the discovered circular dependence
     }
     
     var fCb = function() {
-        if ( me.state == kernel._states.loading ) {
+        if (me.state == kernel._states.loading) {
             // loading failure
             me.invalidate();
         }  // otherwise module could already be invalidated
            // because of the discovered circular dependence
     }
     
-    kernel._platform.load( this.path, sCb, fCb );
+    kernel._platform.load(this.path, sCb, fCb);
 }
 
 
@@ -234,26 +237,26 @@ kernel._Module.prototype.load = function() {
  * module (or some of the module's parents)
  */
 kernel._Module.prototype.invalidate = function() {
-    if ( this.state == null ) {
+    if (this.state == null) {
         // already invalidated for some other reason
         return;
     }
 
-    while ( this._fCallbacks.length > 0 ) {
+    while (this._fCallbacks.length > 0) {
         // broken callbacks should not break the call stack
-        kernel._platform.thread( this._fCallbacks.shift() );
+        kernel._platform.thread(this._fCallbacks.shift());
     }
 
     var child;
-    for ( var i = 0; i < this.children.length; i++ ) {
+    for (var i = 0; i < this.children.length; i++) {
         child = this.children[i];
         // thread prevents the call stack growth
-        kernel._platform.thread( child.invalidate, child );
+        kernel._platform.thread(child.invalidate, child);
     }
 
     this.destroy();
 
-    if ( this == kernel._activeModule ) {
+    if (this == kernel._activeModule) {
         kernel._loadNext();
     }
 }
@@ -265,9 +268,9 @@ kernel._Module.prototype.invalidate = function() {
  * the module is loaded
  */
 kernel._Module.prototype.finalizeLoading = function() {
-    if ( typeof init != 'function' && this.parents.length == 0 ) {
+    if (typeof init != 'function' && this.parents.length == 0) {
         // no init(), no include()
-        kernel._throw( 'Initializer missing: ' + this.path );
+        kernel._throw('Initializer missing: ' + this.path);
         this.invalidate();
     } else {
         this._init = init;
@@ -275,10 +278,10 @@ kernel._Module.prototype.finalizeLoading = function() {
 
         if (!this.isNeeded()) {
             this.destroy();
-        } else if ( this.areParentsReady() ) {
+        } else if (this.areParentsReady()) {
             this.initialize();
         } else {
-            this.setState( kernel._states.waiting );
+            this.setState(kernel._states.waiting);
         }
 
         kernel._loadNext();
@@ -292,7 +295,7 @@ kernel._Module.prototype.finalizeLoading = function() {
  * initialization, notifies children and decides what to do next
  */
 kernel._Module.prototype.initialize = function() {
-    this.setState( kernel._states.initializing );
+    this.setState(kernel._states.initializing);
 
     // gives time for statistics meters to update
     kernel._platform.thread(
@@ -310,19 +313,19 @@ kernel._Module.prototype.initialize = function() {
             // probably be needed after the module was initialized,
             // but then requested agan
 
-            if ( this.state != null ) {
-                if ( !this.isNeeded() ) {
+            if (this.state != null) {
+                if (!this.isNeeded()) {
                     this.uninitialize();
                 } else {
-                    this.setState( kernel._states.ready );
-                    while ( this._sCallbacks.length>0 ) {
-                        ( this._sCallbacks.shift() )();
+                    this.setState(kernel._states.ready);
+                    while (this._sCallbacks.length>0) {
+                        (this._sCallbacks.shift())();
                     }
 
                     // initializing children
-                    for ( var i = 0; i < this.children.length; i++ ) {
-                        if ( this.children[i].state == kernel._states.waiting &&
-                             this.children[i].areParentsReady() ) {
+                    for (var i = 0; i < this.children.length; i++) {
+                        if (this.children[i].state == kernel._states.waiting &&
+                             this.children[i].areParentsReady()) {
                             this.children[i].initialize();
                         }
                     }
@@ -330,7 +333,7 @@ kernel._Module.prototype.initialize = function() {
             }  // otherwise the module was invalidated 
         },
         this
-    );
+   );
 }
 
 
@@ -347,7 +350,7 @@ kernel._Module.prototype.initialize = function() {
  * reasonable
  */
 kernel._Module.prototype.uninitialize = function() {
-    this.setState( kernel._states.uninitializing );
+    this.setState(kernel._states.uninitializing);
 
     // gives time for statistics meters to update
     kernel._platform.thread(
@@ -355,21 +358,21 @@ kernel._Module.prototype.uninitialize = function() {
             // will be performed even if uninitializer is broken
             kernel._platform.thread(
                 function() {
-                    if ( this.isNeeded() ) {
+                    if (this.isNeeded()) {
                         this.initialize();
                     } else {
                         this.destroy();
                     }
                 },
                 this
-            );
+           );
 
-            if ( this._uninit != null ) {
+            if (this._uninit != null) {
                 this._uninit();
             }
         },
         this
-    );
+   );
 }
 
 
@@ -383,22 +386,22 @@ kernel._Module.prototype.destroy = function() {
 
     // cloning the parents since removeChild could change the list
     var i, parents = [];
-    for ( i = 0; i < this.parents.length; i++ ) {
+    for (i = 0; i < this.parents.length; i++) {
         parents[i] = this.parents[i];
     }
     
-    for ( i = 0; i < parents.length; i++ ) {
+    for (i = 0; i < parents.length; i++) {
         parents[i].removeChild(this);
     }
 
     // uncounting module in all statistics
-    for ( i = 0; i < this._statsList.length; i++ ) {
+    for (i = 0; i < this._statsList.length; i++) {
         this._statsList[i][this.state]--;
     }
 
     // removing the module from the global list
-    for ( i = 0; i < kernel._modules.length; i++ ) {
-        if ( kernel._modules[i]==this ) {
+    for (i = 0; i < kernel._modules.length; i++) {
+        if (kernel._modules[i]==this) {
             kernel._modules.splice(i,1);
             break;
         }
@@ -419,7 +422,7 @@ kernel._Module.prototype.destroy = function() {
  * 
  * @param {Module} child to link with
  */
-kernel._Module.prototype.addChild = function( child ) {
+kernel._Module.prototype.addChild = function(child) {
     this.children.push(child);
     child.parents.push(this);
 }
@@ -432,26 +435,26 @@ kernel._Module.prototype.addChild = function( child ) {
  * 
  * @param {Module} child to unlink with
  */
-kernel._Module.prototype.removeChild = function( child ) {
-    for ( var i = 0; i < this.children.length; i++ ) {
-        if ( this.children[i] == child ) {
+kernel._Module.prototype.removeChild = function(child) {
+    for (var i = 0; i < this.children.length; i++) {
+        if (this.children[i] == child) {
             this.children.splice(i,1);
             break;
         }
     }
 
-    for ( i = 0; i < child.parents.length; i++ ) {
-        if ( child.parents[i] == this ) {
+    for (i = 0; i < child.parents.length; i++) {
+        if (child.parents[i] == this) {
             child.parents.splice(i,1);
             break;
         }
     }
 
-    if ( !this.isNeeded() ) {
-        if ( this.state == kernel._states.waiting ) {
+    if (!this.isNeeded()) {
+        if (this.state == kernel._states.waiting) {
             // thread prevents call stack growth
-            kernel._platform.thread( this.destroy, this );
-        } else if ( this.state == kernel._states.ready ) {
+            kernel._platform.thread(this.destroy, this);
+        } else if (this.state == kernel._states.ready) {
             this.uninitialize();
         }
     }
@@ -466,9 +469,9 @@ kernel._Module.prototype.removeChild = function( child ) {
  *
  * @param {Array} stats array where a module should be counted
  */
-kernel._Module.prototype.addStats = function( stats ) {
-    for ( var i = 0; i < this._statsList.length; i++ ) {
-        if ( this._statsList[i] == stats ) {
+kernel._Module.prototype.addStats = function(stats) {
+    for (var i = 0; i < this._statsList.length; i++) {
+        if (this._statsList[i] == stats) {
             return; // already counted in given statistics
         }
     }
@@ -476,7 +479,7 @@ kernel._Module.prototype.addStats = function( stats ) {
     this._statsList.push(stats);
     stats[this.state]++;
 
-    for ( i = 0; i < this.parents.length; i++ ) {
+    for (i = 0; i < this.parents.length; i++) {
         this.parents[i].addStats(stats);
     }
 }
@@ -491,9 +494,9 @@ kernel._Module.prototype.addStats = function( stats ) {
  * 
  * @param {Array} stats to stop participating in
  */
-kernel._Module.prototype.removeStats = function( stats ) {
-    for ( var i = 0; i < this._statsList.length; i++ ) {
-        if ( this._statsList[i] == stats ) {
+kernel._Module.prototype.removeStats = function(stats) {
+    for (var i = 0; i < this._statsList.length; i++) {
+        if (this._statsList[i] == stats) {
             this._statsList.splice(i,1);
             break;
         }
@@ -510,11 +513,11 @@ kernel._Module.prototype.removeStats = function( stats ) {
  *
  * @param {Number} state new state of the module
  */
-kernel._Module.prototype.setState = function( state ) {
+kernel._Module.prototype.setState = function(state) {
     var oldState = this.state;
     this.state = state;
 
-    for ( var i = 0; i < this._statsList.length; i++ ) {
+    for (var i = 0; i < this._statsList.length; i++) {
         this._statsList[i][oldState]--;
         this._statsList[i][this.state]++;
     }
@@ -532,10 +535,10 @@ kernel._Module.prototype.setState = function( state ) {
  * @returns {Boolean} true if there is a (sub)child having the given
  * path, false otherwise
  */
-kernel._Module.prototype.isSubChild = function( path ) {
-    for ( var i = 0; i < this.children.length; i++ ) {
-        if ( this.children[i].path == path ||
-             this.children[i].isSubChild(path) ) {
+kernel._Module.prototype.isSubChild = function(path) {
+    for (var i = 0; i < this.children.length; i++) {
+        if (this.children[i].path == path ||
+             this.children[i].isSubChild(path)) {
              return true;
         }
     }
@@ -566,8 +569,8 @@ kernel._Module.prototype.isNeeded = function() {
  * otherwise
  */
 kernel._Module.prototype.areParentsReady = function() {
-    for ( var i = 0; i < this.parents.length; i++ ) {
-        if ( this.parents[i].state != kernel._states.ready ) {
+    for (var i = 0; i < this.parents.length; i++) {
+        if (this.parents[i].state != kernel._states.ready) {
             return false;
         }
     }
@@ -585,10 +588,10 @@ kernel._Module.prototype.areParentsReady = function() {
  * @param {Function} sCb to call after the module is ready
  * @param {Function} fCb to call upon failure
  */
-kernel._Module.prototype.require = function( ticket, sCb, fCb ) {
+kernel._Module.prototype.require = function(ticket, sCb, fCb) {
     this._tickets.push(ticket);
 
-    if ( this.state == kernel._states.ready ) {
+    if (this.state == kernel._states.ready) {
         if (sCb) {
             // broken callbacks should not break the call stack
             kernel._platform.thread(sCb);
@@ -612,18 +615,18 @@ kernel._Module.prototype.require = function( ticket, sCb, fCb ) {
  *
  * @param {kernel._Ticket} ticket which does not need the module
  */
-kernel._Module.prototype.release = function( ticket ) {
-    for ( var i = 0; i < this._tickets.length; i++ ) {
-        if ( this._tickets[i] == ticket ) {
+kernel._Module.prototype.release = function(ticket) {
+    for (var i = 0; i < this._tickets.length; i++) {
+        if (this._tickets[i] == ticket) {
             this._tickets.splice(i,1);
             break;
         }
     }
 
-    if ( !this.isNeeded() ) {
-        if ( this.state == kernel._states.waiting ) {
+    if (!this.isNeeded()) {
+        if (this.state == kernel._states.waiting) {
             this.destroy();
-        } else if ( this.state == kernel._states.ready ) {
+        } else if (this.state == kernel._states.ready) {
             this.uninitialize();
         }
     }
@@ -640,7 +643,7 @@ kernel._Module.prototype.release = function( ticket ) {
  * @param {Function} sCb to call when all modules are ready
  * @param {Function} fCb to call upon failure
  */
-kernel._Ticket = function( modules, sCb, fCb ) {
+kernel._Ticket = function(modules, sCb, fCb) {
     this._modules = modules;
     this._sCb = sCb || null;
     this._fCb = fCb || null;
@@ -667,7 +670,7 @@ kernel._Ticket.prototype._load = function() {
 
     // fCb called after single failure
     var failure = false;
-    var singleFCb = function( path ) {
+    var singleFCb = function(path) {
         if (!failure) {
             failure = true;
             kernel.release(me);
@@ -677,8 +680,8 @@ kernel._Ticket.prototype._load = function() {
         }
     };
 
-    for ( var i = 0; i<this._modules.length; i++ ) {
-        this._modules[i].require( this, singleSCb, singleFCb );
+    for (var i = 0; i<this._modules.length; i++) {
+        this._modules[i].require(this, singleSCb, singleFCb);
     }
 }
 
@@ -688,14 +691,14 @@ kernel._Ticket.prototype._load = function() {
  * @function _release() releases the ticket for all its modules
  */
 kernel._Ticket.prototype._release = function() {
-    for ( var i = 0; i < this._modules.length; i++ ) {
+    for (var i = 0; i < this._modules.length; i++) {
         this._modules[i].release(this);
     }
 
     // modules do not need to participate in the statistics anymore
-    if ( this._stats ) {
-        for ( i = 0; i < kernel._modules.length; i++ ) {
-            kernel._modules[i].removeStats( this._stats );
+    if (this._stats) {
+        for (i = 0; i < kernel._modules.length; i++) {
+            kernel._modules[i].removeStats(this._stats);
         }
     }
 }
@@ -711,12 +714,12 @@ kernel._Ticket.prototype._release = function() {
 kernel._Ticket.prototype._getStats = function() {
     if (!this._stats) {
         this._stats = [];
-        for ( var i in kernel._states ) {
-            this._stats[ kernel._states[i] ] = 0;
+        for (var i in kernel._states) {
+            this._stats[kernel._states[i]] = 0;
         }
 
-        for ( i = 0; i < this._modules.length; i++ ) {
-            this._modules[i].addStats( this._stats );
+        for (i = 0; i < this._modules.length; i++) {
+            this._modules[i].addStats(this._stats);
         }
     }
 
@@ -729,8 +732,8 @@ kernel._modules = [];        // list of all known modules
 kernel._activeModule = null; // currently loading module
 kernel._loadQueue = [];      // list of modules to be loaded
 kernel._stats = [];          // numbers of modules for each state
-for ( var i in kernel._states ) {
-    kernel._stats[ kernel._states[i] ] = 0;
+for (var i in kernel._states) {
+    kernel._stats[kernel._states[i]] = 0;
 }
 
 
@@ -745,19 +748,19 @@ for ( var i in kernel._states ) {
  *
  * @returns {String} absolute path of a module
  */
-kernel._getAbsolute = function( path, childPath ) {
+kernel._getAbsolute = function(path, childPath) {
     // concatinating path with the child's path (without the filename)
     // remote path and path starting from '/' treated as absolute
-    if ( !kernel._isRemote(path) && path.substr(0,1) != '/' ) {
-        path = childPath.substr( 0, childPath.lastIndexOf('/')+1 ) + path;
+    if (!kernel._isRemote(path) && path.substr(0,1) != '/') {
+        path = childPath.substr(0, childPath.lastIndexOf('/')+1) + path;
     }
 
     // resolving (clearing) up-dir sequences such as 'foo/../'
     var newPath = path;
     do {
         path = newPath;
-        newPath = path.replace( /[\w\.~]*\/\.\.\//, '' );
-    } while ( newPath!=path );
+        newPath = path.replace(/[\w\.~]*\/\.\.\//, '');
+    } while (newPath!=path);
 
     return path;
 }
@@ -772,7 +775,7 @@ kernel._getAbsolute = function( path, childPath ) {
  * 
  * @returns {Boolean} true if path starts with 'http', false otherwise
  */
-kernel._isRemote = function( path ) {
+kernel._isRemote = function(path) {
     var remote =
         path.substr(0,7).toLowerCase() == 'http://' ||
         path.substr(0,8).toLowerCase() == 'https://';
@@ -791,17 +794,17 @@ kernel._isRemote = function( path ) {
  *
  * @returns {kernel._Module} found or newly created module
  */
-kernel._getOrCreateModule = function( path ) {
+kernel._getOrCreateModule = function(path) {
     var module = null;
-    for ( var i = 0; i < kernel._modules.length; i++ ) {
-        if ( kernel._modules[i].path == path ) {
+    for (var i = 0; i < kernel._modules.length; i++) {
+        if (kernel._modules[i].path == path) {
             module = kernel._modules[i];
         }
     }
 
     if (!module) {
         module = new kernel._Module(path);
-        if ( !kernel._activeModule ) {
+        if (!kernel._activeModule) {
             kernel._loadNext();
         }
     }
@@ -818,16 +821,16 @@ kernel._getOrCreateModule = function( path ) {
 kernel._loadNext = function() {
     init = uninit = null;
 
-    if ( kernel._loadQueue.length > 0 ) {
+    if (kernel._loadQueue.length > 0) {
         // searching for the most demanded module
         var maxModule = kernel._loadQueue[0];
         var maxChildren = maxModule.children.length;
         var maxIdx = 0;
         var current = null;
 
-        for ( var i = 1; i < kernel._loadQueue.length; i++ ) {
+        for (var i = 1; i < kernel._loadQueue.length; i++) {
             current = kernel._loadQueue[i];
-            if ( current.children.length > maxChildren ) {
+            if (current.children.length > maxChildren) {
                 maxChildren = current.children.length;
                 maxModule = current;
                 maxIdx = i;
@@ -850,8 +853,8 @@ kernel._loadNext = function() {
  * 
  * @param {Object} e exception to throw
  */
-kernel._throw = function( e ) {
-    kernel._platform.thread( function() { throw e; } );
+kernel._throw = function(e) {
+    kernel._platform.thread(function() { throw e; });
 }
 
 
@@ -875,8 +878,9 @@ kernel._platform = {};
  *   user-provided callback which could potentially be invalid
  *   (try-catch would suppress the error message)
  * 
- * - giving some to update the UI before taking some action (in this
- *   case could be used by loading indicators tracking the statistics)
+ * - giving some time to update the UI before taking some action (in
+ *   this case could be used by loading indicators tracking the
+ *   statistics)
  * 
  * - making the debugging insanely complicated (which means that
  *   calling this function should be avoided, or at least explained in
@@ -888,44 +892,44 @@ kernel._platform = {};
  *
  * @example:
  *   kernel._platform.thread(
- *       myFunction, myObject, [ arg1, arg2, ... ]
- *   );
+ *       myFunction, myObject, [arg1, arg2, ...]
+ *  );
  * 
  *   - will perform the following expression in a new 'thread':
  * 
- *   myObject.myFunction( arg1, arg2, ... );
+ *   myObject.myFunction(arg1, arg2, ...);
  */
-if ( typeof window != 'undefined'
-     && typeof window.addEventListener != 'undefined' ) {
-    kernel._platform.thread = function( func, obj, args ) {
-        kernel._platform._threads.push( [ func, obj||window, args ]);
-        window.postMessage( kernel._platform._threadMsg, '*' );
+if (typeof window != 'undefined'
+     && typeof window.addEventListener != 'undefined') {
+    kernel._platform.thread = function(func, obj, args) {
+        kernel._platform._threads.push([func, obj||window, args]);
+        window.postMessage(kernel._platform._threadMsg, '*');
     }
 
     // Threading supplimentary routines
     kernel._platform._threads = []; // a list of pending threads
     kernel._platform._threadMsg = 'helios-thread-' + (new Date().getTime());
     // starts a thread on event
-    kernel._platform._startThread = function( event ) {
-        if ( event.source == window &&
-             event.data == kernel._platform._threadMsg ) {
-            if ( kernel._platform._threads.length > 0 ) {
+    kernel._platform._startThread = function(event) {
+        if (event.source == window &&
+             event.data == kernel._platform._threadMsg) {
+            if (kernel._platform._threads.length > 0) {
                 var thread = kernel._platform._threads.shift();
-                thread[0].apply( thread[1], thread[2] );
+                thread[0].apply(thread[1], thread[2]);
             }
         }
     };
 
-    window.addEventListener( 'message', kernel._platform._startThread, true );
+    window.addEventListener('message', kernel._platform._startThread, true);
 
 } else {
     // fallback version (for ie/node)
-    kernel._platform.thread = function( func, obj, args ) {
+    kernel._platform.thread = function(func, obj, args) {
         setTimeout(
             function() {
-                func.apply( obj||null, args||[] );
+                func.apply(obj||null, args||[]);
             }, 10
-        );
+       );
     };
 }
 
@@ -940,7 +944,7 @@ if ( typeof window != 'undefined'
  * @param {Function} sCb
  * @param {Function} fCb called after a timeout if module was not loaded
  */
-if ( typeof window != 'undefined' ) {
+if (typeof window != 'undefined') {
     // WEB
     // common script element cloned each time a new script is needed
     kernel._platform._commonScript = document.createElement('script');
@@ -948,9 +952,9 @@ if ( typeof window != 'undefined' ) {
     // time before a module invalidation
     kernel._platform._invalidateTimeout = 4000;
 
-    kernel._platform.load = function( path, sCb, fCb ) {
-        if ( path.charAt(0) == '/' ) {
-            path = path.substr( 1, path.length-1 );
+    kernel._platform.load = function(path, sCb, fCb) {
+        if (path.charAt(0) == '/') {
+            path = path.substr(1, path.length-1);
         }
 
         var script = kernel._platform._commonScript.cloneNode(false);
@@ -976,7 +980,7 @@ if ( typeof window != 'undefined' ) {
         script.onload = success;
         script.onreadystatechange = function() {
             var state = script.readyState;
-            if ( state==='loaded' || state==='complete' ) {
+            if (state==='loaded' || state==='complete') {
                 success();
             }
         }
@@ -984,7 +988,7 @@ if ( typeof window != 'undefined' ) {
         script.onerror = failure;
         var failureTimeout = setTimeout(
             failure, kernel._platform._invalidateTimeout
-        );
+       );
 
         document.body.appendChild(script);
     }
@@ -999,7 +1003,7 @@ if ( typeof window != 'undefined' ) {
      * @param {Function} sCb success callback
      * @param {Function} fCb failure callback
      */
-    kernel._platform._loadLocal = function( path, sCb, fCb ) {
+    kernel._platform._loadLocal = function(path, sCb, fCb) {
         try {
             require(path);
             // removing code from the cache:
@@ -1023,7 +1027,7 @@ if ( typeof window != 'undefined' ) {
      * @param {Function} sCb success callback
      * @param {Function} fCb failure callback
      */
-    kernel._platform._loadRemote = function( path, sCb, fCb ) {
+    kernel._platform._loadRemote = function(path, sCb, fCb) {
         var http = require('http');
 
         var fail = function(e) {
@@ -1033,7 +1037,7 @@ if ( typeof window != 'undefined' ) {
 
         var execute = function(code) {
             try {
-                require('vm').runInThisContext( code,  path );
+                require('vm').runInThisContext(code,  path);
             } catch(e) {
                 fail(e);
             }
@@ -1042,23 +1046,23 @@ if ( typeof window != 'undefined' ) {
         }
 
         var receive = function(res) {
-            if ( res.statusCode != 200 ) {
+            if (res.statusCode != 200) {
                 fail('HTTP responce status code: ' + res.statusCode);
             } else {
                 var content = '';
-                res.on( 'end', function() { execute(content); } );
+                res.on('end', function() { execute(content); });
                 res.on(
                     'readable',
                     function() {
                         var chunk = res.read();
                         content += chunk.toString();
                     }
-                );
+               );
             }
         }
 
         try {
-            http.get( path, receive ).on('error', fail );
+            http.get(path, receive).on('error', fail);
         } catch (e) {
             fail(e);
         }
@@ -1074,11 +1078,11 @@ if ( typeof window != 'undefined' ) {
      * @param {Function} sCb success callback
      * @param {Function} fCb failure callback
      */
-    kernel._platform.load = function( path, sCb, fCb ) {
-        if ( kernel._isRemote(path) ) {
-            kernel._platform._loadRemote( path, sCb, fCb );
+    kernel._platform.load = function(path, sCb, fCb) {
+        if (kernel._isRemote(path)) {
+            kernel._platform._loadRemote(path, sCb, fCb);
         } else {
-            kernel._platform._loadLocal( path, sCb, fCb );
+            kernel._platform._loadLocal(path, sCb, fCb);
         }
     }
 }
