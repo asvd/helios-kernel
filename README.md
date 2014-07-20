@@ -179,7 +179,7 @@ content:
 
 ```js
 require('helios-kernel/kernel.js');
-kernel.require( __dirname + '/main.js');
+kernel.require(__dirname + '/main.js');
 ```
 
 If you have used `npm` to install Helios Kernel, you may also do it
@@ -187,7 +187,7 @@ like this:
 
 ```js
 require('helios-kernel');
-kernel.require( __dirname + '/main.js');
+kernel.require(__dirname + '/main.js');
 ```
 
 - To launch the application under web-browser, load the newly created
