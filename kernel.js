@@ -759,7 +759,7 @@ kernel._getAbsolute = function(path, childPath) {
     var newPath = path;
     do {
         path = newPath;
-        newPath = path.replace(/[\w\.~]*\/\.\.\//, '');
+        newPath = path.replace(/[\w\-\.~]*\/\.\.\//, '');
     } while (newPath!=path);
 
     return path;
