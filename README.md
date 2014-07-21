@@ -33,7 +33,7 @@ include('../path/to/anotherLibrary.js');
 init = function() {
     // module code,
     // objects declared in the included modules are available at this point
-    someLibrary.sayHello();
+    LIB.someLibrary.sayHello();
 }
 ```
 
@@ -51,40 +51,43 @@ This is how `someLibrary.js` included in the module above could look:
 
 ```js
 init = function() {
-    // (globally) declaring a library object
-    someLibrary = {};
+    // object containing the library routines
+    LIB.someLibrary = {};
 
     // library method
-    someLibrary.sayHello = function() {
+    LIB.someLibrary.sayHello = function() {
         console.log('Hello World!');
     }
 }
 ```
 
-In this example the `someLibrary` object is declared as a global.
-This differs to a more common approach of objects exporting (which is
-considered as a must-have nowadays and is reused in most of other
-loaders), however this is done intentionally and there are some
-serious reasons for that:
+Helios Kernel introduces a global object called `LIB`, which is a
+special registry designed to store the libraries. In this example a
+library object `someLibrary` is declared as a property of the `LIB`
+object. Other modules may then access the library object over the
+`LIB` registry.
 
-*The exporting technique (based on the [module
-pattern](http://www.adequatelygood.com/JavaScript-Module-Pattern-In-Depth.html))
+*This differs to a more common approach of objects exporting, which is
+based on the [module
+pattern](http://www.adequatelygood.com/JavaScript-Module-Pattern-In-Depth.html),
 aims to provide the precise control over the objects created by a
-library, but its disadvantage is the overheads during managing the
-dependency structure introduced by an artificial coupling between a
-module (library internal structure) and the exported object (library
-interface). Moreover, deeper investigation shows that such fine
-control over the exported objects [does not bring any advantages over
-simply declaring globals](https://gist.github.com/asvd/7619633).*
+library, and thus considered as a must-have nowadays and reused in
+most of other loaders. However the disadvantage of such technique is
+the [overheads](https://gist.github.com/asvd/7619633) during managing
+the dependency structure, introduced by an artificial coupling between
+a module (library internal structure) and the exported object (library
+interface).*
 
-Helios Kernel does not apply any restrictions on how to transfer the
-data between the modules, even some custom exporting technique may be
-implemented on top of it. However declaring an object as a global is
-suggested as a simpliest method.
+Using Helios Kernel one may split a library into modules with the most
+logical and convenient way without being linked to the objects created
+by the particular modules. Moreover Helios Kernel does not apply any
+restrictions on how to transfer the data between the modules or what
+to perform at all inside a module body.
 
-Thereby the `init()` function may contain any preferred code, its
-scope may be used to keep some private data, and to make some object
-available from outside, it could be declared as a global.
+By convention a library stores its routines as a property of the `LIB`
+registry, and the name of that property should match the library
+name. A set of modules which the library is split into may build-up
+and fill-in the library object.
 
 This is basicly everything you need to know to start using Helios
 Kernel for setting-up the dependencies in your project. This text
@@ -134,7 +137,7 @@ code with an `init()` function declaration)
 ### How to setup a new project based on the Helios Kernel
 
 - Download the distribution
-[here](https://github.com/asvd/helios-kernel/releases/download/v0.9.6/helios-kernel-0.9.6.tar.gz)
+[here](https://github.com/asvd/helios-kernel/releases/download/v0.9.7/helios-kernel-0.9.7.tar.gz)
 and unpack it somewhere, i.e. in `helios-kernel/` directory. You may
 also use [npm](https://npmjs.org/) to install Helios Kernel under
 Node.js:
@@ -203,7 +206,7 @@ $ node nodestart.js
 ### How to use Kernel-compatible library with an existing project
 
 - Download the Helios Kernel distribution
-[here](https://github.com/asvd/helios-kernel/releases/download/v0.9.6/helios-kernel-0.9.6.tar.gz)
+[here](https://github.com/asvd/helios-kernel/releases/download/v0.9.7/helios-kernel-0.9.7.tar.gz)
 and unpack it somwhere. For Node.js you may also use `npm` to install
 Helios Kernel:
 
@@ -242,12 +245,13 @@ include('../path/to/anotherLibrary.js');
 init = function() {
     // module code,
     // objects declared in the included modules are available at this point
-    someLibrary.sayHello();
+    LIB.someLibrary.sayHello();
 }
 ```
 
 The simpliest approach to make the module data available to other
-modules, is to (globally) declare the needed objects.
+modules, is to put the data inside a library object in the `LIB`
+registry.
 
 
 ### Dynamical module loading
@@ -285,7 +289,7 @@ Therefore, dynamically loading a module looks like this:
 ```js
 var sCallback = function() {
     // the library is loaded, we may use it now
-    someLibrary.doSomething();
+    LIB.someLibrary.doSomething();
 }
 
 var fCallback = function() {
@@ -325,11 +329,11 @@ Therefore the full version of a library module could look like this:
 ```js
 // module initializer
 init = function() {
-    // (globally) declaring a library object
-    someLibrary = {};
+    // object containing the library routines
+    LIB.someLibrary = {};
 
     // library method
-    someLibrary.sayHello = function() {
+    LIB.someLibrary.sayHello = function() {
         console.log('Hello World!');
     }
 }
@@ -338,8 +342,8 @@ init = function() {
 // module uninitializer
 uninit = function() {
     // removing objects created in the initializer
-    someLibrary = null;
-    delete someLibrary;
+    LIB.someLibrary = null;
+    delete LIB.someLibrary;
 }
 ```
 
