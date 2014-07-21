@@ -61,10 +61,10 @@ init = function() {
 }
 ```
 
-Helios Kernel introduces a global object called `LIB`, which is a
-special registry designed to store the libraries. In this example a
-library object `someLibrary` is declared as a property of the `LIB`
-object. Other modules may then access the library object over the
+Helios Kernel introduces a special global object called `LIB`, which
+serves as a registry designed to store the libraries. In this example
+a library object `someLibrary` is declared as a property of the `LIB`
+object. Other modules may then access the library routines over the
 `LIB` registry.
 
 *This differs to a more common approach of objects exporting, which is
