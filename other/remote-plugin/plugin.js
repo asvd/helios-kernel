@@ -10,6 +10,7 @@ var cb = function(result) {
 environment.remote.cubeEnv(3, cb);
 
 
+debugger;
 
 var iface ={
     square     : function(x, cb) { cb(x*x); },
