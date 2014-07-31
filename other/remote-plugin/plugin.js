@@ -1,6 +1,6 @@
 
 //environment.remote.showHello();
-environment.remote.logMessage('Hello!');
+environment.remote.logMessage('Hello! I am remote plugin!!');
 
 
 var cb = function(result) {
@@ -21,7 +21,7 @@ environment.setInterface(iface);
 
 
 var init = function() {
-    environment.remote.logMessage('Connection established');
+    environment.remote.logMessage('Remote connection established');
 
     var cb_ = function() {
         environment.remote.logMessage('Multiple messaging test!\n\n');
