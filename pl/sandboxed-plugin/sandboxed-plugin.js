@@ -281,7 +281,7 @@
         }
 
         this._platformPlugin.importScript(
-            platform._currentPath+'_common.js', sCb, fCb
+            platform._currentPath+'common.js', sCb, fCb
         );
     }
 
