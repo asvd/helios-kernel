@@ -79,7 +79,7 @@
                 platform._launchLoaded();
             }
 
-            platform._load(platform._currentPath+'_common.js', cb);
+            platform._load(platform._currentPath+'common.js', cb);
         }
 
         platform._loadedCbs = [];
@@ -153,7 +153,7 @@
             });
             this._worker.postMessage({
                 type: 'initImport',
-                url: platform._currentPath + '_pluginWeb.js'
+                url: platform._currentPath + 'pluginWeb.js'
             });
         }
 
@@ -300,7 +300,7 @@
         }
                                  
         this._platformPlugin.importScript(
-            platform._currentPath+'_pluginCore.js', sCb, fCb
+            platform._currentPath+'pluginCore.js', sCb, fCb
         );
     }
     
