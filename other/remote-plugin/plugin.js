@@ -2,6 +2,9 @@
 //environment.remote.showHello();
 environment.remote.logMessage('Hello! I am remote plugin!!');
 
+debugger;
+importScript('file:///home/xpostman/projects/code/sandboxed-plugin/plugin.js');
+debugger;
 
 var cb = function(result) {
     environment.remote.logMessage('Result is: '+result);
@@ -10,7 +13,7 @@ var cb = function(result) {
 environment.remote.cubeEnv(3, cb);
 
 
-debugger;
+
 
 var iface ={
     square     : function(x, cb) { cb(x*x); },
