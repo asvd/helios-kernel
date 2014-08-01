@@ -3,7 +3,7 @@
 environment.remote.logMessage('Hello! I am remote plugin!!');
 
 debugger;
-importScript('file:///home/xpostman/projects/code/sandboxed-plugin/plugin.js');
+importScript('file:///home/xpostman/projects/code/sandboxed-plugin/insecure.js');
 debugger;
 
 var cb = function(result) {
