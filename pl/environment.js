@@ -1,6 +1,6 @@
 var path = 'file:///home/xpostman/projects/code/sandboxed-plugin/plugin.js';
 
-path = 'http://asvd.github.io/helios-kernel/other/remote-plugin/plugin.js';
+//path = 'http://asvd.github.io/helios-kernel/other/remote-plugin/plugin.js';
 
 var iface = {
     showHello  : function() { alert("HELLO!");},
