@@ -1,10 +1,6 @@
 
 //environment.remote.showHello();
-environment.remote.logMessage('Hello! I am remote plugin!!');
-
-debugger;
-importScript('file:///home/xpostman/projects/code/sandboxed-plugin/insecure.js');
-debugger;
+environment.remote.logMessage('Hello! I am remotest plugin!!');
 
 var cb = function(result) {
     environment.remote.logMessage('Result is: '+result);
