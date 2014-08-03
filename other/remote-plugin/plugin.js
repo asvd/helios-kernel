@@ -37,7 +37,7 @@ var init = function() {
 }
 
 
-environment.setWhenConnected(init);
+environment.whenConnected(init);
 
 
 
