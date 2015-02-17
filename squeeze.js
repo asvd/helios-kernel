@@ -3230,7 +3230,7 @@ function (exports) {
         }
 
         this._blocks[blockNum].style.backgroundPosition =
-            util.px(offset) + ' 0px';
+            util.px(offset) + ' 2px';
     }
     
     
