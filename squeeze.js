@@ -20,7 +20,7 @@ function (exports) {
 
     var cfg = {
         textureMaxSqueeze : 1000,
-        indicatorMaxArea  : .2,
+        indicatorMaxArea  : .16,
         indicatorGain     : 1/3000,
         animationTime     : 160,
         animationDelay    : 20
