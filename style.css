@@ -1,8 +1,11 @@
 body {
+    background-color : #121C29;
+}
+
+
+.wrap {
     font: 12pt Bitstream Vera Sans, sans-serif;
     color : #A5BAC9;
-    background-color : #121C29;
-    old-background-color : #18212C;
     width : 600px;
     padding-left : 100px;
     padding-top : 50px;
