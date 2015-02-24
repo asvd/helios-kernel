@@ -1,5 +1,5 @@
 /**
- * @fileoverview squeeze - scrolling indication
+ * @fileoverview intence - scrolling indication
  * @version 0.1.0
  * 
  * @license MIT, see http://github.com/asvd/squeeze
@@ -825,19 +825,19 @@ function (exports) {
         var base = 10;
         var disp = base * .4;
 
-        var row, col, idx, val, rowIntense, intense;
+        var row, col, idx, val, rowIntensity, intensity;
         for (row = 0; row < h; row++) {
-            rowIntense = 10 + Math.floor(Math.random() * base);
+            rowIntensity = 10 + Math.floor(Math.random() * base);
             for (col = 0; col < w; col++) {
                 idx = 4*w*row + 4*col;
-                intense = Math.floor(
-                    rowIntense - disp + 2*disp*Math.random()
+                intensity = Math.floor(
+                    rowIntensity - disp + 2*disp*Math.random()
                 );
 
-                D[idx++] = intense;      // R
-                D[idx++] = intense + 5;  // G
-                D[idx++] = intense + 10; // B
-                D[idx]   = 255;          // A
+                D[idx++] = intensity;      // R
+                D[idx++] = intensity + 5;  // G
+                D[idx++] = intensity + 10; // B
+                D[idx]   = 255;            // A
             }
         }
 
@@ -1607,11 +1607,11 @@ function (exports) {
             padding : '0px'
         };
 
-        this._origStyle = {overflow : this._elem.style.overflow,};
+        this._origStyle = {overflow : this._elem.style.overflow};
 
         // wrapper2 prevents extra padding for the body element
         var createWrapper2 = false;
-        var wrapper2Style = {};
+        var marginsStyle = {};
         if (this._isBody) {
             var margins = [
                 'margin', 'marginTop', 'marginRight',
@@ -1622,7 +1622,7 @@ function (exports) {
             var i, m;
             for (i = 0; i < margins.length; i++) {
                 m = margins[i];
-                wrapper2Style[m] = cs[m];
+                marginsStyle[m] = cs[m];
                 this._origStyle[m] = this._elem.style[m];
             }
 
@@ -1670,7 +1670,7 @@ function (exports) {
                 height   : '100%'
             });
 
-            util.setStyle(this._cmp.wrapper2, wrapper2Style);
+            util.setStyle(this._cmp.container, marginsStyle);
             this._cmp.wrapper2.appendChild(this._cmp.scroller);
             this._cmp.wrapper.appendChild(this._cmp.wrapper2);
         } else {
